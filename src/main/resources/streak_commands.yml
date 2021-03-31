@@ -1,0 +1,5 @@
+'5': 'give %entity% redstone 1'
+'10': 'give %entity% iron_ingot 1'
+'15': 'give %entity% diamond 1'
+'20': 'give %entity% emerald 2'
+'25': 'give %entity% diamond 10'

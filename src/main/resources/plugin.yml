@@ -1,0 +1,51 @@
+name: mobstats
+main: net.slipcor.mobstats.MobStats
+version: 0.1.build-number
+api-version: 1.13
+author: slipcor
+softdepend: [MobArena,PlaceholderAPI]
+website: https://www.spigotmc.org/resources/pvp-stats.59124/
+commands:
+  mobstats:
+    description: handle PvE stats
+    aliases: stats
+permissions:
+  mobstats.reload:
+    description: Ability to reload
+    default: op
+  mobstats.config:
+    description: Ability to read and alter config values
+    default: op
+  mobstats.migrate:
+    description: Ability to migrate
+    default: op
+  mobstats.purge:
+    description: Ability to purge
+    default: op
+  mobstats.wipe:
+    description: Ability to wipe
+    default: op
+  mobstats.debug:
+    description: Ability to debug
+    default: op
+  mobstats.debugkill:
+    description: Ability to add a debug kill
+    default: op
+  mobstats.count:
+    description: Permission to be counted
+    default: true
+  mobstats.nonewbie:
+    description: Permission to be out of newbie status
+    default: true
+  mobstats.newbie:
+    description: Permission to be not out of newbie status
+    default: false
+  mobstats.top:
+    description: Permission to get global stats
+    default: true
+  mobstats.null:
+    description: Permission that you should not give to anyone.
+    default: false
+  mobstats.opmessages:
+    description: Permission to notify when the plugin errors
+    default: op
