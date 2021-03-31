@@ -54,7 +54,7 @@ This plugin will keep records of how many mob kills, deaths, kills in a row a pl
 
 ## Changelog
 
-- v0.1.2 - fix spigot project link (pending approval !!), leaderboard message and pom dependencies
+- v0.1.3 - remove breaking remnants (introduced in v0.1.2)
 - [read more](doc/changelog.md)
 
 ***
