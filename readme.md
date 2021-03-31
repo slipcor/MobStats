@@ -20,7 +20,7 @@ This plugin will keep records of how many mob kills, deaths, kills in a row a pl
 
 ## Dependencies
 
-- Spigot - unclear which versions will work. Tested on 1.16!
+- Spigot - unclear which versions will work. Tested on 1.16, the plugin this is based on has been tested down to 1.13.
 
 ***
 
@@ -54,7 +54,7 @@ This plugin will keep records of how many mob kills, deaths, kills in a row a pl
 
 ## Changelog
 
-- v0.1.1 - initial version, everything should work!
+- v0.1.2 - fix spigot project link (pending approval !!), leaderboard message and pom dependencies
 - [read more](doc/changelog.md)
 
 ***

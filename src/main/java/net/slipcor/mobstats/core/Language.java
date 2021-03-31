@@ -19,7 +19,7 @@ public enum Language {
 
     ERROR_COMMAND_ARGUMENT("error.command_argument", "&cInvalid argument '%0%', expected %1%"),
     ERROR_DATABASE_METHOD("error.database_method", "&cInvalid database method, must be different from current!"),
-    ERROR_DISPLAY_INVALID("error.display_invalid", "&cInvalid display setup - here is how to do it: https://slipcor.net/?go=mc13"),
+    ERROR_DISPLAY_INVALID("error.display_invalid", "&cInvalid display setup - here is how to do it: https://slipcor.net/?go=mc33"),
     ERROR_INVALID_ARGUMENT_COUNT("error.invalid_argument_count", "&cInvalid number of arguments&r (%0% instead of %1%)!"),
     ERROR_INVALID_NUMBER("error.invalid_number", "&cNot a valid number: &r%0%"),
     ERROR_NOT_A_PLAYER("error.not_a_player", "&cYou are not a player. Please execute as player!"),

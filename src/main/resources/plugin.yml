@@ -4,7 +4,7 @@ version: 0.1.build-number
 api-version: 1.13
 author: slipcor
 softdepend: [MobArena,PlaceholderAPI]
-website: https://www.spigotmc.org/resources/pvp-stats.59124/
+website: https://www.spigotmc.org/resources/mobstats.90776/
 commands:
   mobstats:
     description: handle PvE stats
