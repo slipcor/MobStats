@@ -54,7 +54,7 @@ This plugin will keep records of how many mob kills, deaths, kills in a row a pl
 
 ## Changelog
 
-- v0.1.3 - remove breaking remnants (introduced in v0.1.2)
+- v0.1.4 - update bStats project ID
 - [read more](doc/changelog.md)
 
 ***

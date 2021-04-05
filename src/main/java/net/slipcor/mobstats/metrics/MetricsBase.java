@@ -64,7 +64,7 @@ public class MetricsBase {
     private final Plugin plugin;
 
     // The plugin id
-    private final int pluginId = 9747;
+    private final int pluginId = 10882;
 
     // A list with all custom charts
     protected final List<CustomChart> charts = new ArrayList<>();
