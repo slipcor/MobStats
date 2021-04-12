@@ -47,7 +47,7 @@ public final class DatabaseAPI {
 
     /**
      * Entity A killed Entity B - use this to generally emulate a kill.
-     * <p>
+     *
      * There will be checks for newbie status, whether one entity is a Player
      *
      * @param attacker the killing Entity
@@ -232,7 +232,7 @@ public final class DatabaseAPI {
 
     /**
      * Check whether an Entity has a statistic entry
-     * <p>
+     *
      * YML will return true always as this is only about deciding between INSERT and UPDATE query
      *
      * @param uuid the Entity id to find

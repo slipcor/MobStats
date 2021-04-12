@@ -19,7 +19,7 @@ public class Config {
 
     /**
      * The Config constructor;
-     * <p>
+     *
      * Create the config and append comments
      *
      * @param plugin the JavaPlugin which contains the config
@@ -34,7 +34,7 @@ public class Config {
 
     /**
      * The Config entry class
-     * <p>
+     *
      * Each entry has an explicit class type, a node, optional comments
      * and a default value
      */
@@ -258,7 +258,7 @@ public class Config {
 
     /**
      * Append the comments.
-     * <p>
+     *
      * Iterate over the config file and add comments, if we didn't do that
      * already.
      */

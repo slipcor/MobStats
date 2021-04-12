@@ -9,7 +9,7 @@ import java.util.*;
 
 /**
  * Class for fast temporary access to Entity statistics
- * <p>
+ *
  * Should never be publicly used to SET variables, only for quick access to existing values
  */
 public final class EntityStatisticsBuffer {
