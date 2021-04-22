@@ -26,7 +26,7 @@ This plugin will keep records of how many mob kills, deaths, kills in a row a pl
 
 ## Downloads
 
-- [spigotmc.org](https://www.spigotmc.org/resources/pvp-stats.59124/)
+- [spigotmc.org](https://www.spigotmc.org/resources/mobstats.90776/)
 - [Discord - #pvpstats-builds](https://discord.gg/BNkk46vRKa)
 
 
@@ -54,7 +54,7 @@ This plugin will keep records of how many mob kills, deaths, kills in a row a pl
 
 ## Changelog
 
-- v0.1.4 - update bStats project ID
+- v0.1.5 - update spigopt project url
 - [read more](doc/changelog.md)
 
 ***

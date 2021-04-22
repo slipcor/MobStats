@@ -209,7 +209,7 @@ public class Updater extends Thread {
                 in.close();
                 vOnline = version.replace("v", "");
 
-                url = "https://www.spigotmc.org/resources/pvp-stats.59124/";
+                url = "https://www.spigotmc.org/resources/mobstats.90776/";
 
                 website = new URL("http://pa.slipcor.net/versioncheck.php?plugin=" + pluginName + "&link=true&type=" + type.toString().toLowerCase() + "&major=" + major + "&minor=" + minor);
                 connection = website.openConnection();
@@ -278,7 +278,7 @@ public class Updater extends Thread {
                         @Override
                         public void run() {
                             if (finalError) {
-                                player.sendMessage("The plugin could not updated, download the new version here: https://www.spigotmc.org/resources/pvp-stats.59124/");
+                                player.sendMessage("The plugin could not updated, download the new version here: " + instance.url);
                             } else {
                                 player.sendMessage("The plugin has been updated, please restart the server!");
                             }
