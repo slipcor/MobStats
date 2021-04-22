@@ -1,5 +1,6 @@
 package net.slipcor.mobstats.commands;
 
+import net.slipcor.mobstats.MobStats;
 import net.slipcor.mobstats.api.DatabaseAPI;
 import net.slipcor.mobstats.classes.Debugger;
 import net.slipcor.mobstats.classes.NameHandler;
@@ -24,7 +25,7 @@ public class CommandDebugKill extends AbstractCommand {
     public void commit(CommandSender sender, String[] args) {
         debugger.i("debug kill!");
         if (!hasPerms(sender)) {
-            sender.sendMessage(Language.MSG_NOPERMDEBUG.toString());
+            MobStats.getInstance().sendPrefixed(sender, Language.MSG_NOPERMDEBUG.toString());
             return;
         }
         if (!argCountValid(sender, args, new Integer[]{3})) {

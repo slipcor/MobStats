@@ -54,7 +54,7 @@ This plugin will keep records of how many mob kills, deaths, kills in a row a pl
 
 ## Changelog
 
-- v0.1.5 - update spigopt project url
+- v0.1.6 - use prefix in more messages, use language nodes where it makes sense
 - [read more](doc/changelog.md)
 
 ***

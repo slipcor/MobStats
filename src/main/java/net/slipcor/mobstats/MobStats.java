@@ -27,6 +27,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -372,7 +373,7 @@ public class MobStats extends JavaPlugin {
         final OfflinePlayer player = NameHandler.findPlayer(args[0]);
 
         if (player == null) {
-            sender.sendMessage("Player not found: " + args[0]);
+            sendPrefixed(sender, "Player not found: " + args[0]);
         }
 
         if (!found && DatabaseAPI.hasEntry(player.getUniqueId())) {
@@ -462,9 +463,14 @@ public class MobStats extends JavaPlugin {
     }
 
     public void sendPrefixed(final CommandSender sender, final String message) {
-        if (!"".equals(message)) {
-            sender.sendMessage(Language.MSG_PREFIX + message);
+        if ("".equals(message)) {
+            return;
         }
+        if (sender instanceof Player) {
+            sender.sendMessage(Language.MSG_PREFIX + message);
+            return;
+        }
+        getLogger().info(message);
     }
 
     public void sendPrefixedOP(List<CommandSender> senders, final TextComponent... message) {

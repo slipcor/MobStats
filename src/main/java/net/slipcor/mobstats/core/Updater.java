@@ -232,7 +232,7 @@ public class Updater extends Thread {
         }
     }
 
-    private void message(final CommandSender player, UpdateInstance instance) {
+    private void message(final CommandSender sender, UpdateInstance instance) {
         try {
             if (!instance.msg) {
                 return;
@@ -240,7 +240,7 @@ public class Updater extends Thread {
 
             if (instance.outdated) {
                 boolean error = false;
-                if (!(player instanceof Player) && mode != UpdateMode.ANNOUNCE) {
+                if (!(sender instanceof Player) && mode != UpdateMode.ANNOUNCE) {
                     // not only announce, download!
                     final File updateFolder = Bukkit.getServer().getUpdateFolderFile();
                     if (!updateFolder.exists()) {
@@ -265,30 +265,30 @@ public class Updater extends Thread {
 
                 }
 
-                if ((mode != UpdateMode.DOWNLOAD || error) || (!(player instanceof Player))) {
-                    player.sendMessage("You are using " + instance.colorize('v' + instance.vThis)
+                if ((mode != UpdateMode.DOWNLOAD || error) || (!(sender instanceof Player))) {
+                    MobStats.getInstance().sendPrefixed(sender, "You are using " + instance.colorize('v' + instance.vThis)
                             + ", an outdated version! Latest: " + ChatColor.COLOR_CHAR + 'a' + 'v' + instance.vOnline);
                 }
 
                 if (mode == UpdateMode.ANNOUNCE) {
-                    player.sendMessage(instance.url);
+                    MobStats.getInstance().sendPrefixed(sender, instance.url);
                 } else {
                     boolean finalError = error;
                     class RunLater implements Runnable {
                         @Override
                         public void run() {
                             if (finalError) {
-                                player.sendMessage("The plugin could not updated, download the new version here: " + instance.url);
+                                MobStats.getInstance().sendPrefixed(sender, "The plugin could not updated, download the new version here: " + instance.url);
                             } else {
-                                player.sendMessage("The plugin has been updated, please restart the server!");
+                                MobStats.getInstance().sendPrefixed(sender, "The plugin has been updated, please restart the server!");
                             }
                         }
                     }
                     Bukkit.getScheduler().runTaskLater(MobStats.getInstance(), new RunLater(), 60L);
                 }
             } else {
-                if (mode != UpdateMode.DOWNLOAD || (!(player instanceof Player))) {
-                    player.sendMessage("You are using " + instance.colorize('v' + instance.vThis)
+                if (mode != UpdateMode.DOWNLOAD || (!(sender instanceof Player))) {
+                    MobStats.getInstance().sendPrefixed(sender, "You are using " + instance.colorize('v' + instance.vThis)
                             + ", an experimental version! Latest stable: " + ChatColor.COLOR_CHAR + 'a' + 'v'
                             + instance.vOnline);
                 }
@@ -301,15 +301,15 @@ public class Updater extends Thread {
     /**
      * message a player if the version is different
      *
-     * @param player the player to message
+     * @param sender the player to message
      */
-    public void message(final CommandSender player) {
+    public void message(final CommandSender sender) {
         class DownloadLater implements Runnable {
 
             @Override
             public void run() {
                 for (final UpdateInstance instance : instances) {
-                    message(player, instance);
+                    message(sender, instance);
                 }
             }
         }

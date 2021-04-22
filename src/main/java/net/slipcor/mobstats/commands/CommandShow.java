@@ -2,6 +2,7 @@ package net.slipcor.mobstats.commands;
 
 import net.slipcor.mobstats.MobStats;
 import net.slipcor.mobstats.classes.NameHandler;
+import net.slipcor.mobstats.core.Language;
 import net.slipcor.mobstats.runnables.SendPlayerStats;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -30,7 +31,7 @@ public class CommandShow extends AbstractCommand {
                 Bukkit.getScheduler().runTaskAsynchronously(MobStats.getInstance(),
                         new SendPlayerStats(sender, (Player) sender));
             } else {
-                sender.sendMessage("You do not have stats!");
+                MobStats.getInstance().sendPrefixed(sender, "You do not have stats!");
             }
             return;
         }
@@ -41,7 +42,7 @@ public class CommandShow extends AbstractCommand {
             final OfflinePlayer player = NameHandler.findPlayer(args[1]);
 
             if (player == null || player.getPlayer() == null) {
-                sender.sendMessage("Player not found: " + args[1]);
+                MobStats.getInstance().sendPrefixed(sender, Language.INFO_PLAYERNOTFOUND.toString(args[1]));
                 return;
             }
             Bukkit.getScheduler().runTaskAsynchronously(

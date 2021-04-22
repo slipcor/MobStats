@@ -133,34 +133,21 @@ public class Debugger {
         check.clear();
         strings.clear();
         override = false;
-        boolean isPlayer = sender instanceof Player;
 
         final String debugs = instance.getConfig().getString("debug", "off");
 
         loggers.clear();
 
         if ("off".equalsIgnoreCase(debugs) || "none".equalsIgnoreCase(debugs) || "false".equalsIgnoreCase(debugs)) {
-            if (isPlayer) {
-                sender.sendMessage("debugging: off");
-            } else {
-                MobStats.getInstance().getLogger().info("debugging: off");
-            }
+            MobStats.getInstance().sendPrefixed(sender, "debugging: off");
         } else {
             if ("on".equalsIgnoreCase(debugs) || "all".equalsIgnoreCase(debugs) || "true".equalsIgnoreCase(debugs)) {
                 Debugger.check.add(666);
                 override = true;
-                if (isPlayer) {
-                    sender.sendMessage("debugging on!");
-                } else {
-                    MobStats.getInstance().getLogger().info("debugging on!");
-                }
+                MobStats.getInstance().sendPrefixed(sender, "debugging on!");
             } else {
                 final String[] sIds = debugs.split(",");
-                if (isPlayer) {
-                    sender.sendMessage("debugging: " + debugs);
-                } else {
-                    MobStats.getInstance().getLogger().info("debugging: " + debugs);
-                }
+                MobStats.getInstance().sendPrefixed(sender, "debugging: " + debugs);
                 for (final String s : sIds) {
                     try {
                         Debugger.check.add(Integer.valueOf(s));

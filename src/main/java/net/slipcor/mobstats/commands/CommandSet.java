@@ -1,5 +1,6 @@
 package net.slipcor.mobstats.commands;
 
+import net.slipcor.mobstats.MobStats;
 import net.slipcor.mobstats.api.DatabaseAPI;
 import net.slipcor.mobstats.api.EntityStatisticsBuffer;
 import net.slipcor.mobstats.classes.NameHandler;
@@ -22,7 +23,7 @@ public class CommandSet extends AbstractCommand {
     @Override
     public void commit(final CommandSender sender, final String[] args) {
         if (!hasPerms(sender)) {
-            sender.sendMessage(Language.MSG_NOPERMSET.toString());
+            MobStats.getInstance().sendPrefixed(sender, Language.MSG_NOPERMSET.toString());
             return;
         }
 
@@ -56,14 +57,14 @@ public class CommandSet extends AbstractCommand {
                     return;
                 }
 
-                sender.sendMessage(Language.MSG_SET.toString(args[2], args[1], String.valueOf(amount)));
+                MobStats.getInstance().sendPrefixed(sender, Language.MSG_SET.toString(args[2], args[1], String.valueOf(amount)));
 
                 DatabaseAPI.refresh();
             } else {
-                sender.sendMessage(Language.INFO_PLAYERNOTFOUND.toString(args[1]));
+                MobStats.getInstance().sendPrefixed(sender, Language.INFO_PLAYERNOTFOUND.toString(args[1]));
             }
         } catch (Exception e) {
-            sender.sendMessage(Language.ERROR_INVALID_NUMBER.toString(args[3]));
+            MobStats.getInstance().sendPrefixed(sender, Language.ERROR_INVALID_NUMBER.toString(args[3]));
         }
     }
 

@@ -439,21 +439,21 @@ public final class DatabaseAPI {
 
 
         if (dbHandler != null && dbHandler.connect(true)) {
-            sender.sendMessage("Database connection successful");
+            MobStats.getInstance().sendPrefixed(sender, "Database connection successful");
             // Check if the tables exist, if not, create them
             if (!dbHandler.tableExists(dbDatabase, dbTable)) {
                 // normal table doesnt exist, create both
 
-                sender.sendMessage("Creating table " + dbTable);
+                MobStats.getInstance().sendPrefixed(sender, "Creating table " + dbTable);
                 dbHandler.createStatsTable(true);
 
                 if (dbKillTable != null) {
-                    sender.sendMessage("Creating table " + dbKillTable);
+                    MobStats.getInstance().sendPrefixed(sender, "Creating table " + dbKillTable);
                     dbHandler.createKillStatsTable(true);
                 }
             }
         } else {
-            sender.sendMessage("Database connection failed");
+            MobStats.getInstance().sendPrefixed(sender, "Database connection failed");
         }
 
         return dbHandler;
