@@ -55,14 +55,7 @@ This plugin will keep records of how many mob kills, deaths, kills in a row a pl
 
 ## Changelog
 
-- v0.1.7 - use my Core API and the following upstream issues:
-  - **FEAT** - add ability to run multiple commands on a streak
-  - **FEAT** - allow to count pet kills
-  - **FEAT** - support late loading of worlds
-  - **FIX** - fix newbie check for deaths not from PvE
-  - **FIX** - properly treat the "simple calculation" config node as boolean
-  - **FIX** - replace several hardcoded messages with proper language settings
-  - **FIX** - fix issue with MySQL table checks with limited permissions
+- v0.1.8 - fix some NPEs, fix comments, remove MobArena debugging (introduced in last commit)
 - [read more](doc/changelog.md)
 
 ***

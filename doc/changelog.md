@@ -1,5 +1,6 @@
 # v0.1 Changelog
 
+- v0.1.8 - fix some NPEs, fix comments, remove MobArena debugging (introduced in last commit)
 - v0.1.7 - use my Core API and the following upstream issues:
   - **FEAT** - add ability to run multiple commands on a streak
   - **FEAT** - allow to count pet kills

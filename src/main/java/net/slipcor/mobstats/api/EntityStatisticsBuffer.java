@@ -297,7 +297,9 @@ public final class EntityStatisticsBuffer {
 
         for (UUID uuid : uuids) {
             Entity entity = Bukkit.getServer().getEntity(uuid);
-            DatabaseAPI.info(entity); // pre-load previously loaded Entities
+            if (entity != null) {
+                DatabaseAPI.info(entity); // pre-load previously loaded Entities
+            }
         }
     }
 }

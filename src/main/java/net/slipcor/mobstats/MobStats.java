@@ -1,7 +1,5 @@
 package net.slipcor.mobstats;
 
-import com.garbagemule.MobArena.MobArena;
-import com.garbagemule.MobArena.framework.Arena;
 import net.slipcor.core.*;
 import net.slipcor.mobstats.api.DatabaseAPI;
 import net.slipcor.mobstats.api.DatabaseConnection;
@@ -31,10 +29,6 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 
@@ -48,7 +42,7 @@ import java.util.*;
  * @author slipcor
  */
 
-public class MobStats extends CorePlugin implements Listener {
+public class MobStats extends CorePlugin {
     // Plugin instance to use staticly all over the place
     private static MobStats instance;
     private final static int CFGVERSION = 1;
@@ -430,9 +424,9 @@ public class MobStats extends CorePlugin implements Listener {
         EntityListener.Debugger = new CoreDebugger(this, 3);
         CheckAndDo.DEBUGGER = new CoreDebugger(this, 20);
         DatabaseIncreaseDeaths.debugger = new CoreDebugger(this, 19);
-        DatabaseIncreaseKills.debugger = new CoreDebugger(this, 19);
-        DatabaseIncreaseKillsStreak.debugger = new CoreDebugger(this, 19);
-        DatabaseKillAddition.debugger = new CoreDebugger(this, 19);
+        DatabaseIncreaseKills.debugger = new CoreDebugger(this, 17);
+        DatabaseIncreaseKillsStreak.debugger = new CoreDebugger(this, 15);
+        DatabaseKillAddition.debugger = new CoreDebugger(this, 14);
 
         if (!new File(getDataFolder(), "streak_announcements.yml").exists()) {
             saveResource("streak_announcements.yml", false);
@@ -454,7 +448,6 @@ public class MobStats extends CorePlugin implements Listener {
         if (config().getBoolean(Config.Entry.OTHER_MOBARENA)) {
             if (getServer().getPluginManager().isPluginEnabled("MobArena")) {
                 getServer().getPluginManager().registerEvents(pluginListener, this);
-                getServer().getPluginManager().registerEvents(this, this);
             } else {
                 PluginListener paPluginListener = new PluginListener(this);
                 getServer().getPluginManager().registerEvents(paPluginListener, this);
@@ -535,31 +528,6 @@ public class MobStats extends CorePlugin implements Listener {
             if (TextFormatter.hasContent(message)) {
                 TextFormatter.send(sender, TextFormatter.addPrefix(message));
                 TextFormatter.explainDisableOPMessages(sender);
-            }
-        }
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onEntityDamage(EntityDamageEvent event) {
-        if (maHandler != null) {
-            long me = System.nanoTime();
-            MobArena mobArena = ((MobArena) maHandler);
-            Arena arena;
-            if (event.getEntity() instanceof Player) {
-                arena = mobArena.getArenaMaster().getArenaWithPlayer((Player) event.getEntity());
-                if (arena != null) {
-                    System.out.println(String.format("Entity is player in arena '%s'! [%d]", arena.getSlug(), System.nanoTime()-me));
-                }
-                return;
-            }
-            arena = mobArena.getArenaMaster().getArenaWithMonster(event.getEntity());
-            if (arena != null) {
-                System.out.println(String.format("Entity is monster in arena '%s'! [%d]", arena.getSlug(), System.nanoTime()-me));
-                return;
-            }
-            arena = mobArena.getArenaMaster().getArenaWithPet(event.getEntity());
-            if (arena != null) {
-                System.out.println(String.format("Entity is pet in arena '%s'! [%d]", arena.getSlug(), System.nanoTime()-me));
             }
         }
     }

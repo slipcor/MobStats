@@ -74,8 +74,8 @@ statistics:
 other:
   # use players' display names
   displayNames: false
-  # count PVP Arena deaths
-  PVPArena: false
+  # count MobArena deaths
+  MobArena: false
   OPMessages: true
 # world names where not to count statistics
 ignoreworlds:

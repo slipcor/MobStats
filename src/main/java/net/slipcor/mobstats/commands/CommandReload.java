@@ -34,7 +34,7 @@ public class CommandReload extends CoreCommand {
             return;
         }
         MobStats.getInstance().reloadStreaks();
-        MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_RELOADED.toString());
+        MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_RELOADED.parse());
 
         DatabaseAPI.refresh();
 

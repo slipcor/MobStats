@@ -68,7 +68,7 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
                 if (split.length > 3) {
                     return Language.MSG.HEAD_HEADLINE.parse(
                             String.valueOf(pos),
-                            Language.MSG.valueOf("HEAD_" + name).toString());
+                            Language.MSG.valueOf("HEAD_" + name).parse());
                 }
 
                 String[] top = LeaderboardBuffer.top(pos, name);
@@ -97,7 +97,7 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
                 if (split.length > 3) {
                     return Language.MSG.HEAD_HEADLINE.parse(
                             String.valueOf(pos),
-                            Language.MSG.valueOf("HEAD_" + name).toString());
+                            Language.MSG.valueOf("HEAD_" + name).parse());
                 }
 
                 String[] top = LeaderboardBuffer.flop(pos, name);
