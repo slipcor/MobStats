@@ -1,9 +1,9 @@
 package net.slipcor.mobstats.impl;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
@@ -57,12 +57,16 @@ public class MySQLConnection extends AbstractSQLConnection {
      * @return true if the table exists, false if there was an error or the database doesn't exist.
      */
     public boolean tableExists(String database, String table) {
-        String format = "SELECT * FROM `information_schema`.`TABLES` WHERE TABLE_SCHEMA = '$DB' && TABLE_NAME = '$TABLE';";
         try {
-            return this.databaseConnection.createStatement().executeQuery(format.replace("$DB", database).replace("$TABLE", table)).first();
+            ResultSet result = databaseConnection.getMetaData().getTables(databaseConnection.getCatalog(), null, table, null);
+            while (result.next()) {
+                if (result.getString("TABLE_NAME").equals(table)) {
+                    return true;
+                }
+            }
         } catch (SQLException e) {
-            return false;
         }
+        return false;
     }
 
     /*
@@ -78,7 +82,7 @@ public class MySQLConnection extends AbstractSQLConnection {
      */
     @Override
     public void createKillStatsTable(boolean printError) {
-        String world = Bukkit.getServer().getWorlds().get(0).getName();
+        String world = Bukkit.getServer().getWorlds().size() > 0 ? Bukkit.getServer().getWorlds().get(0).getName() : "unknown";
         final String query2 = "CREATE TABLE `" + dbKillTable + "` ( " +
                 "`id` int(16) NOT NULL AUTO_INCREMENT, " +
                 "`name` varchar(42) NOT NULL, " +

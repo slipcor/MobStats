@@ -4,7 +4,7 @@ import com.garbagemule.MobArena.events.ArenaKillEvent;
 import com.garbagemule.MobArena.events.ArenaPlayerDeathEvent;
 import net.slipcor.mobstats.MobStats;
 import net.slipcor.mobstats.api.DatabaseAPI;
-import net.slipcor.mobstats.core.Config;
+import net.slipcor.mobstats.yml.Config;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 

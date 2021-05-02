@@ -1,29 +1,30 @@
 package net.slipcor.mobstats.commands;
 
+import net.slipcor.core.CoreCommand;
+import net.slipcor.core.CorePlugin;
 import net.slipcor.mobstats.MobStats;
 import net.slipcor.mobstats.api.DatabaseAPI;
 import net.slipcor.mobstats.api.EntityStatisticsBuffer;
 import net.slipcor.mobstats.classes.NameHandler;
-import net.slipcor.mobstats.core.Language;
+import net.slipcor.mobstats.yml.Language;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class CommandSet extends AbstractCommand {
-    public CommandSet() {
-        super(new String[]{"mobstats.set"});
+public class CommandSet extends CoreCommand {
+    public CommandSet(CorePlugin plugin) {
+        super(plugin, "mobstats.set", Language.MSG.ERROR_INVALID_ARGUMENT_COUNT);
     }
 
     @Override
     public void commit(final CommandSender sender, final String[] args) {
         if (!hasPerms(sender)) {
-            MobStats.getInstance().sendPrefixed(sender, Language.MSG_NOPERMSET.toString());
+            MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_NOPERMSET.toString());
             return;
         }
 
@@ -57,14 +58,14 @@ public class CommandSet extends AbstractCommand {
                     return;
                 }
 
-                MobStats.getInstance().sendPrefixed(sender, Language.MSG_SET.toString(args[2], args[1], String.valueOf(amount)));
+                MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_SET.parse(args[2], args[1], String.valueOf(amount)));
 
                 DatabaseAPI.refresh();
             } else {
-                MobStats.getInstance().sendPrefixed(sender, Language.INFO_PLAYERNOTFOUND.toString(args[1]));
+                MobStats.getInstance().sendPrefixed(sender, Language.MSG.INFO_PLAYERNOTFOUND.parse(args[1]));
             }
         } catch (Exception e) {
-            MobStats.getInstance().sendPrefixed(sender, Language.ERROR_INVALID_NUMBER.toString(args[3]));
+            MobStats.getInstance().sendPrefixed(sender, Language.MSG.ERROR_INVALID_NUMBER.parse(args[3]));
         }
     }
 
@@ -103,11 +104,6 @@ public class CommandSet extends AbstractCommand {
     @Override
     public List<String> getMain() {
         return Collections.singletonList("set");
-    }
-
-    @Override
-    public String getName() {
-        return getClass().getName();
     }
 
     @Override

@@ -25,6 +25,9 @@ permissions:
   mobstats.wipe:
     description: Ability to wipe
     default: op
+  mobstats.show:
+    description: Ability to show other players' stats
+    default: true
   mobstats.debug:
     description: Ability to debug
     default: op

@@ -1,7 +1,7 @@
 package net.slipcor.mobstats.classes;
 
 import net.slipcor.mobstats.MobStats;
-import net.slipcor.mobstats.core.Config;
+import net.slipcor.mobstats.yml.Config;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;

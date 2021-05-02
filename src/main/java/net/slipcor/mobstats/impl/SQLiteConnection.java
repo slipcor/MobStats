@@ -2,7 +2,6 @@ package net.slipcor.mobstats.impl;
 
 import net.slipcor.mobstats.MobStats;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,7 +77,7 @@ public class SQLiteConnection extends AbstractSQLConnection {
      */
     @Override
     public void createKillStatsTable(boolean printError) {
-        String world = Bukkit.getServer().getWorlds().get(0).getName();
+        String world = Bukkit.getServer().getWorlds().size() > 0 ? Bukkit.getServer().getWorlds().get(0).getName() : "unknown";
         final String query2 = "CREATE TABLE `" + dbKillTable + "` ( " +
                 "`name` varchar(42) NOT NULL, " +
                 "`uid` varchar(42), " +

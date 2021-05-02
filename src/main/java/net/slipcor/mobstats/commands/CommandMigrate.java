@@ -1,23 +1,25 @@
 package net.slipcor.mobstats.commands;
 
+import net.slipcor.core.CoreCommand;
+import net.slipcor.core.CorePlugin;
 import net.slipcor.mobstats.MobStats;
 import net.slipcor.mobstats.api.DatabaseAPI;
-import net.slipcor.mobstats.core.Language;
+import net.slipcor.mobstats.yml.Language;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class CommandMigrate extends AbstractCommand {
-    public CommandMigrate() {
-        super(new String[]{"mobstats.migrate"});
+public class CommandMigrate extends CoreCommand {
+    public CommandMigrate(CorePlugin plugin) {
+        super(plugin, "mobstats.migrate", Language.MSG.ERROR_INVALID_ARGUMENT_COUNT);
     }
 
     @Override
     public void commit(CommandSender sender, String[] args) {
         if (!hasPerms(sender)) {
-            MobStats.getInstance().sendPrefixed(sender, Language.MSG_NOPERMMIGRATE.toString());
+            MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_NOPERMMIGRATE.toString());
             return;
         }
         if (!argCountValid(sender, args, new Integer[]{3})) {
@@ -31,7 +33,7 @@ public class CommandMigrate extends AbstractCommand {
                 args[2].toLowerCase().equals("yml")) {
             method = args[2].toLowerCase();
         } else {
-            MobStats.getInstance().sendPrefixed(sender, Language.ERROR_COMMAND_ARGUMENT.toString(args[2], "'mysql' or 'sqlite' or 'yml'"));
+            MobStats.getInstance().sendPrefixed(sender, Language.MSG.ERROR_COMMAND_ARGUMENT.parse(args[2], "'mysql' or 'sqlite' or 'yml'"));
             return;
         }
 
@@ -39,9 +41,9 @@ public class CommandMigrate extends AbstractCommand {
             int result = DatabaseAPI.migrateFrom(method, sender);
             if (result >= 0) {
                 if (result > 0) {
-                    MobStats.getInstance().sendPrefixed(sender, Language.MSG_MIGRATED.toString(String.valueOf(result)));
+                    MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_MIGRATED.parse(String.valueOf(result)));
                 } else {
-                    MobStats.getInstance().sendPrefixed(sender, Language.MSG_MIGRATE_EMPTY.toString());
+                    MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_MIGRATE_EMPTY.toString());
                 }
             }
 
@@ -51,15 +53,15 @@ public class CommandMigrate extends AbstractCommand {
             int result = DatabaseAPI.migrateTo(method, sender);
             if (result >= 0) {
                 if (result > 0) {
-                    MobStats.getInstance().sendPrefixed(sender, Language.MSG_MIGRATED.toString(String.valueOf(result)));
+                    MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_MIGRATED.parse(String.valueOf(result)));
                 } else {
-                    MobStats.getInstance().sendPrefixed(sender, Language.MSG_MIGRATE_EMPTY.toString());
+                    MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_MIGRATE_EMPTY.toString());
                 }
             }
             return;
         }
 
-        MobStats.getInstance().sendPrefixed(sender, Language.ERROR_COMMAND_ARGUMENT.toString(args[1], "'from' or 'to'"));
+        MobStats.getInstance().sendPrefixed(sender, Language.MSG.ERROR_COMMAND_ARGUMENT.parse(args[1], "'from' or 'to'"));
     }
 
     public List<String> completeTab(String[] args) {
@@ -93,11 +95,6 @@ public class CommandMigrate extends AbstractCommand {
     @Override
     public List<String> getMain() {
         return Collections.singletonList("migrate");
-    }
-
-    @Override
-    public String getName() {
-        return getClass().getName();
     }
 
     @Override

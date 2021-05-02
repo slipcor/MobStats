@@ -1,7 +1,6 @@
 package net.slipcor.mobstats.runnables;
 
 import net.slipcor.mobstats.api.DatabaseAPI;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

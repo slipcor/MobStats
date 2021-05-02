@@ -1,14 +1,11 @@
 package net.slipcor.mobstats.runnables;
 
+import net.slipcor.core.CoreDebugger;
 import net.slipcor.mobstats.MobStats;
 import net.slipcor.mobstats.api.EntityStatisticsBuffer;
-import net.slipcor.mobstats.classes.Debugger;
 import net.slipcor.mobstats.classes.NameHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-
-import java.util.UUID;
 
 public class CheckAndDo implements Runnable {
 
@@ -16,7 +13,7 @@ public class CheckAndDo implements Runnable {
     private final boolean kill;
     private final boolean addMaxStreak;
 
-    private static final Debugger DEBUGGER = new Debugger(20);
+    public static CoreDebugger DEBUGGER;
     private final MobStats plugin = MobStats.getInstance();
 
     public CheckAndDo(final Entity entity, final boolean kill, final boolean addMaxStreak) {

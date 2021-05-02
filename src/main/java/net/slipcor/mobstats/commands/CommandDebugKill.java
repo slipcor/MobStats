@@ -1,10 +1,12 @@
 package net.slipcor.mobstats.commands;
 
+import net.slipcor.core.CoreCommand;
+import net.slipcor.core.CoreDebugger;
+import net.slipcor.core.CorePlugin;
 import net.slipcor.mobstats.MobStats;
 import net.slipcor.mobstats.api.DatabaseAPI;
-import net.slipcor.mobstats.classes.Debugger;
 import net.slipcor.mobstats.classes.NameHandler;
-import net.slipcor.mobstats.core.Language;
+import net.slipcor.mobstats.yml.Language;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -14,18 +16,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class CommandDebugKill extends AbstractCommand {
-    public CommandDebugKill() {
-        super(new String[]{"mobstats.debugkill"});
+public class CommandDebugKill extends CoreCommand {
+    public CommandDebugKill(CorePlugin plugin) {
+        super(plugin, "mobstats.debugkill", Language.MSG.ERROR_INVALID_ARGUMENT_COUNT);
     }
 
-    static Debugger debugger = new Debugger(13);
+    public static CoreDebugger debugger;
 
     @Override
     public void commit(CommandSender sender, String[] args) {
         debugger.i("debug kill!");
         if (!hasPerms(sender)) {
-            MobStats.getInstance().sendPrefixed(sender, Language.MSG_NOPERMDEBUG.toString());
+            MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_NOPERMDEBUG.toString());
             return;
         }
         if (!argCountValid(sender, args, new Integer[]{3})) {
@@ -67,11 +69,6 @@ public class CommandDebugKill extends AbstractCommand {
     @Override
     public List<String> getMain() {
         return Collections.singletonList("debugkill");
-    }
-
-    @Override
-    public String getName() {
-        return getClass().getName();
     }
 
     @Override

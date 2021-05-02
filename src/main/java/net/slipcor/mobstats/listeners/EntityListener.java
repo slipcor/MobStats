@@ -1,37 +1,29 @@
 package net.slipcor.mobstats.listeners;
 
+import net.slipcor.core.CoreDebugger;
 import net.slipcor.mobstats.MobStats;
 import net.slipcor.mobstats.api.DatabaseAPI;
 import net.slipcor.mobstats.api.EntityStatisticsBuffer;
-import net.slipcor.mobstats.classes.Debugger;
 import net.slipcor.mobstats.classes.PlayerDamageHistory;
-import net.slipcor.mobstats.core.Config;
-import net.slipcor.mobstats.core.Language;
 import net.slipcor.mobstats.display.SignDisplay;
 import net.slipcor.mobstats.text.TextFormatter;
+import net.slipcor.mobstats.yml.Config;
+import net.slipcor.mobstats.yml.Language;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntitySpawnEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Player Event Listener class
@@ -42,7 +34,7 @@ import java.util.UUID;
 public class EntityListener implements Listener {
     private final MobStats plugin;
 
-    private final net.slipcor.mobstats.classes.Debugger Debugger = new Debugger(3);
+    public static CoreDebugger Debugger;
 
     private int assistSeconds;
 
@@ -69,6 +61,11 @@ public class EntityListener implements Listener {
             Projectile projectile = (Projectile) event.getDamager();
             if (projectile.getShooter() instanceof Entity && !projectile.getShooter().equals(attacked)) {
                 attacker = (Entity) projectile.getShooter();
+            }
+        } else if (event.getDamager() instanceof Tameable && plugin.config().getBoolean(Config.Entry.STATISTICS_COUNT_PET_DEATHS)) {
+            AnimalTamer tamer = ((Tameable) event.getDamager()).getOwner();
+            if (tamer instanceof Player) {
+                attacker = (Player) tamer;
             }
         } else {
             attacker = event.getDamager();
@@ -186,7 +183,7 @@ public class EntityListener implements Listener {
             return false; // we do eventually count this as regular death
         }
 
-        List<String> tags = plugin.config().getList(Config.Entry.STATISTICS_PREVENTING_PLAYER_META);
+        List<String> tags = plugin.config().getStringList(Config.Entry.STATISTICS_PREVENTING_PLAYER_META, new ArrayList<>());
 
         for (String tag : tags) {
             if (player.hasMetadata(tag)) {
@@ -219,10 +216,10 @@ public class EntityListener implements Listener {
                     if (display != null) {
                         if (!display.isValid()) {
                             // we could not create it!
-                            MobStats.getInstance().sendPrefixed(event.getPlayer(), Language.ERROR_DISPLAY_INVALID.toString());
+                            MobStats.getInstance().sendPrefixed(event.getPlayer(), Language.MSG.ERROR_DISPLAY_INVALID.toString());
                         } else {
                             MobStats.getInstance().sendPrefixed(event.getPlayer(),
-                                    Language.MSG_DISPLAY_CREATED.toString(event.getClickedBlock().getLocation().toString()));
+                                    Language.MSG.MSG_DISPLAY_CREATED.parse(event.getClickedBlock().getLocation().toString()));
 
                             SignDisplay.saveAllDisplays();
                         }
@@ -237,7 +234,7 @@ public class EntityListener implements Listener {
                 display.cycleSortColumn();
                 MobStats.getInstance().sendPrefixed(
                         event.getPlayer(),
-                        Language.MSG_DISPLAY_COLUMN.toString(display.getSortColumn().name()));
+                        Language.MSG.MSG_DISPLAY_COLUMN.parse(display.getSortColumn().name()));
             } else if (SignDisplay.needsProtection(event.getPlayer().getLocation())) {
                 event.setCancelled(!event.getPlayer().isOp());
             }

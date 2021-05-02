@@ -1,7 +1,6 @@
 package net.slipcor.mobstats.api;
 
 import net.slipcor.mobstats.classes.EntityStatistic;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 

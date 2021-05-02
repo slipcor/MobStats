@@ -1,6 +1,6 @@
-package net.slipcor.mobstats.display;
+package net.slipcor.mobstats.api;
 
-public enum SortColumn {
+public enum InformationType {
     NAME,
     DEATHS,
     KILLS,

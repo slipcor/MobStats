@@ -1,9 +1,10 @@
     package net.slipcor.mobstats.display;
 
+    import net.slipcor.core.CoreDebugger;
     import net.slipcor.mobstats.MobStats;
     import net.slipcor.mobstats.api.DatabaseAPI;
-    import net.slipcor.mobstats.classes.Debugger;
-    import net.slipcor.mobstats.core.Language;
+    import net.slipcor.mobstats.api.InformationType;
+    import net.slipcor.mobstats.yml.Language;
     import org.bukkit.Bukkit;
     import org.bukkit.Location;
     import org.bukkit.World;
@@ -27,11 +28,11 @@
         private final BlockFace direction;  // the direction to look for sideways
         private final Location location;    // the initial top-left location
         private int signCount = 0;
-        static Debugger debugger = new Debugger(16);
+        public static CoreDebugger debugger;
 
         Map<Integer, List<Location>> signMap = new LinkedHashMap<>();
-        Map<Integer, SortColumn> columns = new LinkedHashMap<>();
-        private SortColumn column = SortColumn.DEATHS;
+        Map<Integer, InformationType> columns = new LinkedHashMap<>();
+        private InformationType column = InformationType.DEATHS;
 
         public SignDisplay(Location location, BlockFace face) {
             this.location = location;
@@ -128,9 +129,9 @@
                 if (loc != null) {
                     SignDisplay display = init(loc);
                     if (display != null && display.isValid()) {
-                        SortColumn column = getSortColumn(key);
+                        InformationType column = getSortColumn(key);
                         if (column == null) {
-                            column = SortColumn.NAME;
+                            column = InformationType.NAME;
                         }
                         display.column = column;
                     }
@@ -177,13 +178,11 @@
                 String[] colon = value.split(":");
                 World world = Bukkit.getWorld(colon[0]);
                 String[] ints = colon[1].split(",");
-                Location result =
-                        world.getBlockAt(
-                                Integer.parseInt(ints[0]),
-                                Integer.parseInt(ints[1]),
-                                Integer.parseInt(ints[2])
-                        ).getLocation();
-                return result;
+                return world.getBlockAt(
+                        Integer.parseInt(ints[0]),
+                        Integer.parseInt(ints[1]),
+                        Integer.parseInt(ints[2])
+                ).getLocation();
             } catch (Exception e) {
                 MobStats.getInstance().getLogger().severe("Could not parse location: " + value);
                 e.printStackTrace();
@@ -258,7 +257,7 @@
                 org.bukkit.block.Sign sign = (org.bukkit.block.Sign) checkBlock.getRelative(BlockFace.DOWN, offsetDown)
                         .getRelative(direction, offsetSide).getState();
 
-                SortColumn sorting = offsetSide > 0 ? getSortColumn(sign) : SortColumn.NAME;
+                InformationType sorting = offsetSide > 0 ? getSortColumn(sign) : InformationType.NAME;
 
                 if (sorting == null) {
                     offsetSide++;
@@ -290,10 +289,10 @@
             }
         }
 
-        private SortColumn getSortColumn(Sign sign) {
+        private InformationType getSortColumn(Sign sign) {
             for (String s : sign.getLines()) {
                 if (s != null) {
-                    for (SortColumn c : SortColumn.values()) {
+                    for (InformationType c : InformationType.values()) {
                         if (s.toUpperCase().contains(c.name())) {
                             return c;
                         }
@@ -303,8 +302,8 @@
             return null;
         }
 
-        private static SortColumn getSortColumn(String string) {
-            for (SortColumn c : SortColumn.values()) {
+        private static InformationType getSortColumn(String string) {
+            for (InformationType c : InformationType.values()) {
                 if (string.toUpperCase().contains(c.name())) {
                     return c;
                 }
@@ -323,12 +322,12 @@
          * Update a leaderboard by recalculating stats and updating the signs
          */
         private void update() {
-            List<Map<SortColumn, String>> entries = DatabaseAPI.detailedTop(signCount*4, column);
+            List<Map<InformationType, String>> entries = DatabaseAPI.detailedTop(signCount*4, column);
 
             if (location.getBlock().getState() instanceof org.bukkit.block.Sign) {
                 org.bukkit.block.Sign sign = (org.bukkit.block.Sign) location.getBlock().getState();
-                sign.setLine(1, Language.MSG_DISPLAY_SORTEDBY.toString());
-                sign.setLine(2, Language.MSG_DISPLAY_SORTEDCOLUMN.toString(column.name()));
+                sign.setLine(1, Language.MSG.MSG_DISPLAY_SORTEDBY.toString());
+                sign.setLine(2, Language.MSG.MSG_DISPLAY_SORTEDCOLUMN.parse(column.name()));
                 sign.update();
             } else {
                 return;
@@ -341,14 +340,14 @@
 
             for (Integer key : columns.keySet()) {
                 debugger.i("column ID " + key);
-                SortColumn sortColumn = columns.get(key);
+                InformationType informationType = columns.get(key);
                 List<Location> signs  = signMap.get(key);
 
-                writeEntryToSigns(signs, sortColumn, entries);
+                writeEntryToSigns(signs, informationType, entries);
             }
         }
 
-        private void writeEntryToSigns(List<Location> signs, SortColumn column, List<Map<SortColumn, String>> entries) {
+        private void writeEntryToSigns(List<Location> signs, InformationType column, List<Map<InformationType, String>> entries) {
             int signPos = -1;
 
             for (Location loc : signs) {
@@ -372,17 +371,17 @@
             }
         }
 
-        public SortColumn getSortColumn() {
+        public InformationType getSortColumn() {
             return this.column;
         }
 
         public void cycleSortColumn() {
             int ordinal = this.column.ordinal();
             ordinal++;
-            if (ordinal >= SortColumn.values().length) {
+            if (ordinal >= InformationType.values().length) {
                 ordinal = 1;
             }
-            this.column = SortColumn.values()[ordinal];
+            this.column = InformationType.values()[ordinal];
 
             update();
         }

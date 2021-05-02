@@ -2,10 +2,8 @@ package net.slipcor.mobstats.impl;
 
 import net.slipcor.mobstats.MobStats;
 import net.slipcor.mobstats.api.DatabaseConnection;
-import net.slipcor.mobstats.classes.NameHandler;
 import net.slipcor.mobstats.classes.EntityStatistic;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
+import net.slipcor.mobstats.classes.NameHandler;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;

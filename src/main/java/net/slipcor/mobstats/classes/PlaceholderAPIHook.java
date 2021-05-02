@@ -2,9 +2,9 @@ package net.slipcor.mobstats.classes;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.slipcor.mobstats.MobStats;
-import net.slipcor.mobstats.api.LeaderboardBuffer;
 import net.slipcor.mobstats.api.EntityStatisticsBuffer;
-import net.slipcor.mobstats.core.Language;
+import net.slipcor.mobstats.api.LeaderboardBuffer;
+import net.slipcor.mobstats.yml.Language;
 import org.bukkit.OfflinePlayer;
 
 /**
@@ -66,9 +66,9 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
                 String name = split[1].toUpperCase();
 
                 if (split.length > 3) {
-                    return Language.HEAD_HEADLINE.toString(
+                    return Language.MSG.HEAD_HEADLINE.parse(
                             String.valueOf(pos),
-                            Language.valueOf("HEAD_" + name).toString());
+                            Language.MSG.valueOf("HEAD_" + name).toString());
                 }
 
                 String[] top = LeaderboardBuffer.top(pos, name);
@@ -77,7 +77,7 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
                     return ""; // we do not have enough entries, return empty
                 }
 
-                return Language.INFO_NUMBERS.toString(String.valueOf(pos), top[pos-1]);
+                return Language.MSG.INFO_NUMBERS.parse(String.valueOf(pos), top[pos-1]);
             } catch (Exception e) {
                 // let's ignore this for now
                 long now = System.currentTimeMillis();
@@ -95,9 +95,9 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
                 String name = split[1].toUpperCase();
 
                 if (split.length > 3) {
-                    return Language.HEAD_HEADLINE.toString(
+                    return Language.MSG.HEAD_HEADLINE.parse(
                             String.valueOf(pos),
-                            Language.valueOf("HEAD_" + name).toString());
+                            Language.MSG.valueOf("HEAD_" + name).toString());
                 }
 
                 String[] top = LeaderboardBuffer.flop(pos, name);
@@ -106,7 +106,7 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
                     return ""; // we do not have enough entries, return empty
                 }
 
-                return Language.INFO_NUMBERS.toString(String.valueOf(pos), top[pos-1]);
+                return Language.MSG.INFO_NUMBERS.parse(String.valueOf(pos), top[pos-1]);
             } catch (Exception e) {
                 // let's ignore this for now
                 long now = System.currentTimeMillis();

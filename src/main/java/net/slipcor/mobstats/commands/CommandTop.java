@@ -1,8 +1,10 @@
 package net.slipcor.mobstats.commands;
 
+import net.slipcor.core.CoreCommand;
+import net.slipcor.core.CorePlugin;
 import net.slipcor.mobstats.MobStats;
-import net.slipcor.mobstats.core.Language;
 import net.slipcor.mobstats.runnables.SendPlayerTop;
+import net.slipcor.mobstats.yml.Language;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
@@ -10,15 +12,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class CommandTop extends AbstractCommand {
-    public CommandTop() {
-        super(new String[]{"mobstats.top"});
+public class CommandTop extends CoreCommand {
+    public CommandTop(CorePlugin plugin) {
+        super(plugin, "mobstats.top", Language.MSG.ERROR_INVALID_ARGUMENT_COUNT);
     }
 
     @Override
     public void commit(final CommandSender sender, final String[] args) {
         if (!hasPerms(sender)) {
-            MobStats.getInstance().sendPrefixed(sender, Language.MSG_NOPERMTOP.toString());
+            MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_NOPERMTOP.toString());
             return;
         }
 
@@ -114,11 +116,6 @@ public class CommandTop extends AbstractCommand {
     @Override
     public List<String> getMain() {
         return Collections.singletonList("top");
-    }
-
-    @Override
-    public String getName() {
-        return getClass().getName();
     }
 
     @Override

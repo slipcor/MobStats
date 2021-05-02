@@ -1,7 +1,7 @@
 package net.slipcor.mobstats.api;
 
 import net.slipcor.mobstats.MobStats;
-import net.slipcor.mobstats.core.Config;
+import net.slipcor.mobstats.yml.Config;
 
 import java.util.HashMap;
 import java.util.Map;

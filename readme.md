@@ -21,6 +21,7 @@ This plugin will keep records of how many mob kills, deaths, kills in a row a pl
 ## Dependencies
 
 - Spigot - unclear which versions will work. Tested on 1.16, the plugin this is based on has been tested down to 1.13.
+- My [Core](https://github.com/slipcor/Core) library (automatically added to the plugin before release)
 
 ***
 
@@ -54,7 +55,14 @@ This plugin will keep records of how many mob kills, deaths, kills in a row a pl
 
 ## Changelog
 
-- v0.1.6 - use prefix in more messages, use language nodes where it makes sense
+- v0.1.7 - use my Core API and the following upstream issues:
+  - **FEAT** - add ability to run multiple commands on a streak
+  - **FEAT** - allow to count pet kills
+  - **FEAT** - support late loading of worlds
+  - **FIX** - fix newbie check for deaths not from PvE
+  - **FIX** - properly treat the "simple calculation" config node as boolean
+  - **FIX** - replace several hardcoded messages with proper language settings
+  - **FIX** - fix issue with MySQL table checks with limited permissions
 - [read more](doc/changelog.md)
 
 ***

@@ -1,22 +1,18 @@
 package net.slipcor.mobstats.impl;
 
-import net.slipcor.mobstats.MobStats;
 import net.slipcor.mobstats.api.DatabaseConnection;
-import net.slipcor.mobstats.classes.NameHandler;
 import net.slipcor.mobstats.classes.EntityStatistic;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
+import net.slipcor.mobstats.classes.NameHandler;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * A partial implementation of methods that are handled the same by all SQL implementations

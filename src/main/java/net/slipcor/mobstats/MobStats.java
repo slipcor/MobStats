@@ -1,23 +1,27 @@
 package net.slipcor.mobstats;
 
+import com.garbagemule.MobArena.MobArena;
+import com.garbagemule.MobArena.framework.Arena;
+import net.slipcor.core.*;
 import net.slipcor.mobstats.api.DatabaseAPI;
 import net.slipcor.mobstats.api.DatabaseConnection;
-import net.slipcor.mobstats.classes.Debugger;
-import net.slipcor.mobstats.classes.PlaceholderAPIHook;
 import net.slipcor.mobstats.classes.NameHandler;
+import net.slipcor.mobstats.classes.PlaceholderAPIHook;
 import net.slipcor.mobstats.commands.*;
-import net.slipcor.mobstats.core.*;
 import net.slipcor.mobstats.display.SignDisplay;
 import net.slipcor.mobstats.impl.FlatFileConnection;
 import net.slipcor.mobstats.impl.MySQLConnection;
 import net.slipcor.mobstats.impl.SQLiteConnection;
-import net.slipcor.mobstats.listeners.MobArenaListener;
 import net.slipcor.mobstats.listeners.EntityListener;
+import net.slipcor.mobstats.listeners.MobArenaListener;
 import net.slipcor.mobstats.listeners.PluginListener;
 import net.slipcor.mobstats.metrics.MetricsLite;
 import net.slipcor.mobstats.metrics.MetricsMain;
+import net.slipcor.mobstats.runnables.*;
 import net.slipcor.mobstats.text.TextComponent;
 import net.slipcor.mobstats.text.TextFormatter;
+import net.slipcor.mobstats.yml.Config;
+import net.slipcor.mobstats.yml.Language;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -28,9 +32,11 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +48,7 @@ import java.util.*;
  * @author slipcor
  */
 
-public class MobStats extends JavaPlugin {
+public class MobStats extends CorePlugin implements Listener {
     // Plugin instance to use staticly all over the place
     private static MobStats instance;
     private final static int CFGVERSION = 1;
@@ -55,10 +61,12 @@ public class MobStats extends JavaPlugin {
     private DatabaseConnection dbHandler;
 
     // managers
-    private final Debugger debugger = new Debugger(8);
+    private CoreDebugger debugger;
     private Plugin maHandler = null;
-    private Updater updater = null;
+    private CoreUpdater updater = null;
+    private CoreLanguage language = null;
     private Config configHandler = null;
+    private CoreTabCompleter completer;
 
     private FileConfiguration announcements = null; // configurable announcements per streak level
     private FileConfiguration commands = null;      // configurable commands per streak level
@@ -68,8 +76,8 @@ public class MobStats extends JavaPlugin {
     private final MobArenaListener pluginListener = new MobArenaListener(this);
 
     // commands
-    private final Map<String, AbstractCommand> commandMap = new HashMap<>();
-    private final List<AbstractCommand> commandList = new ArrayList<>();
+    private final Map<String, CoreCommand> commandMap = new HashMap<>();
+    private final List<CoreCommand> commandList = new ArrayList<>();
 
     public static MobStats getInstance() {
         return instance;
@@ -90,6 +98,16 @@ public class MobStats extends JavaPlugin {
             getLogger().info("Loaded config file!");
         }
         return configHandler;
+    }
+
+    @Override
+    protected String getMessagePrefix() {
+        return Language.MSG.MSG_PREFIX.parse();
+    }
+
+    @Override
+    protected String getDebugPrefix() {
+        return "";
     }
 
     /**
@@ -116,7 +134,7 @@ public class MobStats extends JavaPlugin {
     /**
      * @return the Updater instance
      */
-    public Updater getUpdater() {
+    public CoreUpdater getUpdater() {
         return updater;
     }
 
@@ -147,12 +165,26 @@ public class MobStats extends JavaPlugin {
                     commands = new YamlConfiguration();
                     commands.load(new File(getDataFolder(), "streak_commands.yml"));
                 }
-                String command = commands.getString(key, "");
-                if (!command.isEmpty()) {
-                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(),
-                            command
-                                    .replace("%entity%", NameHandler.getName(entity))
-                                    .replace("%entityid%", entity.getUniqueId().toString()));
+
+                List<String> cmdList = new ArrayList<>();
+
+                // handle either a string or an array of strings in the file
+                if (commands.isString(key)) {
+                    String cmd = commands.getString(key, "");
+                    if (!cmd.equals("")) {
+                        cmdList.add(cmd);
+                    }
+                } else if (commands.isList(key)) {
+                    cmdList = commands.getStringList(key);
+                }
+
+                for (String command : cmdList) {
+                    if (!command.isEmpty()) {
+                        Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(),
+                                command
+                                        .replace("%entity%", NameHandler.getName(entity))
+                                        .replace("%entityid%", entity.getUniqueId().toString()));
+                    }
                 }
             }
         } catch (IOException | InvalidConfigurationException exception) {
@@ -170,32 +202,35 @@ public class MobStats extends JavaPlugin {
         if (!getConfig().contains(Config.Entry.IGNORE_WORLDS.getNode())) {
             return false;
         }
-        return config().getList(Config.Entry.IGNORE_WORLDS).contains(name);
+        return config().getStringList(Config.Entry.IGNORE_WORLDS, new ArrayList<>()).contains(name);
     }
 
     /**
      * Instantiate command
      */
-    private void loadCommands() {
-        new CommandConfig().load(commandList, commandMap);
-        new CommandDebug().load(commandList, commandMap);
-        new CommandDebugKill().load(commandList, commandMap);
-        new CommandMigrate().load(commandList, commandMap);
-        new CommandPurge().load(commandList, commandMap);
-        new CommandShow().load(commandList, commandMap);
-        new CommandSet().load(commandList, commandMap);
-        new CommandTop().load(commandList, commandMap);
-        new CommandReload().load(commandList, commandMap);
-        new CommandWipe().load(commandList, commandMap);
+    public void loadCommands() {
+        commandList.clear();
+        commandMap.clear();
+        this.completer = null;
+        new CommandConfig(this).load(commandList, commandMap);
+        new CommandDebug(this).load(commandList, commandMap);
+        new CommandDebugKill(this).load(commandList, commandMap);
+        new CommandMigrate(this).load(commandList, commandMap);
+        new CommandPurge(this).load(commandList, commandMap);
+        new CommandShow(this).load(commandList, commandMap);
+        new CommandSet(this).load(commandList, commandMap);
+        new CommandTop(this).load(commandList, commandMap);
+        new CommandReload(this).load(commandList, commandMap);
+        new CommandWipe(this).load(commandList, commandMap);
     }
 
     /**
-     * Read the config and try to connect to the database
+     * Try to connect to the database
      */
     public void loadConfig() {
         DatabaseAPI.initiate(this);
 
-        config().reload();
+        config().load();
 
         String dbHost = null;
         String dbUser = null;
@@ -209,34 +244,34 @@ public class MobStats extends JavaPlugin {
         if (config().getBoolean(Config.Entry.MYSQL_ACTIVE)) {
             this.mySQL = true;
 
-            dbHost = config().get(Config.Entry.MYSQL_HOST);
-            dbUser = config().get(Config.Entry.MYSQL_USERNAME);
-            dbPass = config().get(Config.Entry.MYSQL_PASSWORD);
-            dbDatabase = config().get(Config.Entry.MYSQL_DATABASE);
-            dbTable = config().get(Config.Entry.MYSQL_TABLE);
-            dbOptions = config().get(Config.Entry.MYSQL_OPTIONS);
+            dbHost = config().getString(Config.Entry.MYSQL_HOST);
+            dbUser = config().getString(Config.Entry.MYSQL_USERNAME);
+            dbPass = config().getString(Config.Entry.MYSQL_PASSWORD);
+            dbDatabase = config().getString(Config.Entry.MYSQL_DATABASE);
+            dbTable = config().getString(Config.Entry.MYSQL_TABLE);
+            dbOptions = config().getString(Config.Entry.MYSQL_OPTIONS);
 
             if (config().getBoolean(Config.Entry.STATISTICS_COLLECT_PRECISE)) {
-                dbKillTable = config().get(Config.Entry.MYSQL_KILLTABLE);
+                dbKillTable = config().getString(Config.Entry.MYSQL_KILLTABLE);
             }
 
             dbPort = config().getInt(Config.Entry.MYSQL_PORT);
 
         } else if (config().getBoolean(Config.Entry.SQLITE_ACTIVE)) {
             this.SQLite = true;
-            dbDatabase = config().get(Config.Entry.SQLITE_FILENAME);
+            dbDatabase = config().getString(Config.Entry.SQLITE_FILENAME);
 
-            dbTable = config().get(Config.Entry.SQLITE_TABLE);
+            dbTable = config().getString(Config.Entry.SQLITE_TABLE);
             if (config().getBoolean(Config.Entry.STATISTICS_COLLECT_PRECISE)) {
-                dbKillTable = config().get(Config.Entry.SQLITE_KILLTABLE);
+                dbKillTable = config().getString(Config.Entry.SQLITE_KILLTABLE);
                 getLogger().warning("Specific stats can be turned off as they are never used, they are intended for SQL and web frontend usage!");
                 getLogger().warning("We recommend you set '" + Config.Entry.STATISTICS_COLLECT_PRECISE.getNode() + "' to false");
             }
         } else {
-            dbTable = config().get(Config.Entry.YML_TABLE);
+            dbTable = config().getString(Config.Entry.YML_TABLE);
             if (config().getBoolean(Config.Entry.STATISTICS_COLLECT_PRECISE) &&
                 config().getBoolean(Config.Entry.YML_COLLECT_PRECISE)) {
-                dbKillTable = config().get(Config.Entry.MYSQL_KILLTABLE);
+                dbKillTable = config().getString(Config.Entry.MYSQL_KILLTABLE);
             } else if (config().getBoolean(Config.Entry.STATISTICS_COLLECT_PRECISE)) {
                 getLogger().warning("Specific stats can be turned off as they are never used, they are intended for SQL and web frontend usage!");
                 getLogger().warning("Please either switch to SQLite or re-enable this by setting '" + Config.Entry.YML_COLLECT_PRECISE.getNode() + "' to true");
@@ -294,6 +329,9 @@ public class MobStats extends JavaPlugin {
                     getLogger().info("Creating table " + dbKillTable);
                     dbHandler.createKillStatsTable(true);
                 }
+            } else if (dbKillTable != null && !dbHandler.tableExists(dbDatabase, dbKillTable)) {
+                getLogger().info("Creating table " + dbKillTable);
+                dbHandler.createKillStatsTable(true);
             }
         } else {
             getLogger().severe("Database connection failed");
@@ -305,25 +343,8 @@ public class MobStats extends JavaPlugin {
     /**
      * Load the language file
      */
-    public void loadLanguage() {
-        final File langFile = new File(this.getDataFolder(), "lang.yml");
-        if (!langFile.exists()) {
-            try {
-                langFile.createNewFile();
-            } catch (IOException e) {
-                this.getLogger().warning("Language file could not be created. Using defaults!");
-                e.printStackTrace();
-            }
-        }
-        final YamlConfiguration cfg = YamlConfiguration.loadConfiguration(langFile);
-        if (Language.load(cfg)) {
-            try {
-                cfg.save(langFile);
-            } catch (IOException e) {
-                this.getLogger().warning("Language file could not be written. Using defaults!");
-                e.printStackTrace();
-            }
-        }
+    public String loadLanguage() {
+        return language.load("lang");
     }
 
     /**
@@ -341,7 +362,7 @@ public class MobStats extends JavaPlugin {
 
         debugger.i("onCommand!", sender);
 
-        final AbstractCommand acc = (args.length > 0) ? commandMap.get(args[0].toLowerCase()) : null;
+        final CoreCommand acc = (args.length > 0) ? commandMap.get(args[0].toLowerCase()) : null;
         if (acc != null) {
             acc.commit(sender, args);
             return true;
@@ -363,7 +384,7 @@ public class MobStats extends JavaPlugin {
         }
 
         boolean found = false;
-        for (AbstractCommand command : commandList) {
+        for (CoreCommand command : commandList) {
             if (command.hasPerms(sender)) {
                 sender.sendMessage(ChatColor.YELLOW + command.getShortInfo());
                 found = true;
@@ -373,7 +394,7 @@ public class MobStats extends JavaPlugin {
         final OfflinePlayer player = NameHandler.findPlayer(args[0]);
 
         if (player == null) {
-            sendPrefixed(sender, "Player not found: " + args[0]);
+            sendPrefixed(sender, Language.MSG.INFO_PLAYERNOTFOUND.parse(args[0]));
         }
 
         if (!found && DatabaseAPI.hasEntry(player.getUniqueId())) {
@@ -385,18 +406,34 @@ public class MobStats extends JavaPlugin {
     }
 
     public void onDisable() {
-        Debugger.destroy();
+        destroyDebugger();
         getLogger().info("disabled. (version " + getDescription().getVersion() + ")");
     }
 
-    public void onEnable() {
+    @Override
+    public void onLoad() {
         instance = this;
-        configHandler = config();
+        language = new Language(this);
+        loadConfig();
+    }
+
+    public void onEnable() {
+        debugger = new CoreDebugger(this, 8);
 
         final PluginDescriptionFile pdfFile = getDescription();
 
-        loadConfig();
         loadCommands();
+
+        DatabaseAPI.DEBUGGER = new CoreDebugger(this, 4);
+        CommandDebugKill.debugger = new CoreDebugger(this, 13);
+        SignDisplay.debugger = new CoreDebugger(this, 16);
+        EntityListener.Debugger = new CoreDebugger(this, 3);
+        CheckAndDo.DEBUGGER = new CoreDebugger(this, 20);
+        DatabaseIncreaseDeaths.debugger = new CoreDebugger(this, 19);
+        DatabaseIncreaseKills.debugger = new CoreDebugger(this, 19);
+        DatabaseIncreaseKillsStreak.debugger = new CoreDebugger(this, 19);
+        DatabaseKillAddition.debugger = new CoreDebugger(this, 19);
+
         if (!new File(getDataFolder(), "streak_announcements.yml").exists()) {
             saveResource("streak_announcements.yml", false);
         }
@@ -415,17 +452,23 @@ public class MobStats extends JavaPlugin {
         loadHooks();
 
         if (config().getBoolean(Config.Entry.OTHER_MOBARENA)) {
-            if (getServer().getPluginManager().isPluginEnabled("mobarena")) {
+            if (getServer().getPluginManager().isPluginEnabled("MobArena")) {
                 getServer().getPluginManager().registerEvents(pluginListener, this);
+                getServer().getPluginManager().registerEvents(this, this);
             } else {
                 PluginListener paPluginListener = new PluginListener(this);
                 getServer().getPluginManager().registerEvents(paPluginListener, this);
             }
         }
 
-        updater = new Updater(this, getFile());
+        updater = new CoreUpdater(this, getFile(),
+                "mobstats", "https://www.spigotmc.org/resources/mobstats.90776/",
+                Config.Entry.UPDATE_MODE, Config.Entry.UPDATE_TYPE);
 
-        loadLanguage();
+        if (loadLanguage() != null) {
+            getPluginLoader().disablePlugin(this);
+            return;
+        }
 
         if (config().getBoolean(Config.Entry.BSTATS_ENABLED)) {
             if (config().getBoolean(Config.Entry.BSTATS_FULL)) {
@@ -440,7 +483,7 @@ public class MobStats extends JavaPlugin {
             new PlaceholderAPIHook().register();
         }
 
-        Debugger.load(this, Bukkit.getConsoleSender());
+        loadDebugger("debug", Bukkit.getConsoleSender());
 
         if (config().getBoolean(Config.Entry.STATISTICS_PURGE_MOBS_ON_START)) {
             int days = config().getInt(Config.Entry.STATISTICS_PURGE_MOBS_DAYS);
@@ -454,23 +497,15 @@ public class MobStats extends JavaPlugin {
 
     @Override
     public List<String> onTabComplete(final CommandSender sender, final Command cmd, final String alias, final String[] args) {
-        return TabComplete.getMatches(sender, commandList, args);
+        if (completer == null) {
+            completer = new CoreTabCompleter(true);
+        }
+        return completer.getMatches(sender, commandList, args);
     }
 
     public void reloadStreaks() {
         commands = null;
         announcements = null;
-    }
-
-    public void sendPrefixed(final CommandSender sender, final String message) {
-        if ("".equals(message)) {
-            return;
-        }
-        if (sender instanceof Player) {
-            sender.sendMessage(Language.MSG_PREFIX + message);
-            return;
-        }
-        getLogger().info(message);
     }
 
     public void sendPrefixedOP(List<CommandSender> senders, final TextComponent... message) {
@@ -500,6 +535,31 @@ public class MobStats extends JavaPlugin {
             if (TextFormatter.hasContent(message)) {
                 TextFormatter.send(sender, TextFormatter.addPrefix(message));
                 TextFormatter.explainDisableOPMessages(sender);
+            }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onEntityDamage(EntityDamageEvent event) {
+        if (maHandler != null) {
+            long me = System.nanoTime();
+            MobArena mobArena = ((MobArena) maHandler);
+            Arena arena;
+            if (event.getEntity() instanceof Player) {
+                arena = mobArena.getArenaMaster().getArenaWithPlayer((Player) event.getEntity());
+                if (arena != null) {
+                    System.out.println(String.format("Entity is player in arena '%s'! [%d]", arena.getSlug(), System.nanoTime()-me));
+                }
+                return;
+            }
+            arena = mobArena.getArenaMaster().getArenaWithMonster(event.getEntity());
+            if (arena != null) {
+                System.out.println(String.format("Entity is monster in arena '%s'! [%d]", arena.getSlug(), System.nanoTime()-me));
+                return;
+            }
+            arena = mobArena.getArenaMaster().getArenaWithPet(event.getEntity());
+            if (arena != null) {
+                System.out.println(String.format("Entity is pet in arena '%s'! [%d]", arena.getSlug(), System.nanoTime()-me));
             }
         }
     }

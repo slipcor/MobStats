@@ -1,23 +1,25 @@
 package net.slipcor.mobstats.commands;
 
+import net.slipcor.core.CoreCommand;
+import net.slipcor.core.CorePlugin;
 import net.slipcor.mobstats.MobStats;
 import net.slipcor.mobstats.api.DatabaseAPI;
-import net.slipcor.mobstats.core.Language;
+import net.slipcor.mobstats.yml.Language;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class CommandPurge extends AbstractCommand {
-    public CommandPurge() {
-        super(new String[]{"mobstats.purge"});
+public class CommandPurge extends CoreCommand {
+    public CommandPurge(CorePlugin plugin) {
+        super(plugin, "mobstats.purge", Language.MSG.ERROR_INVALID_ARGUMENT_COUNT);
     }
 
     @Override
     public void commit(CommandSender sender, String[] args) {
         if (!hasPerms(sender)) {
-            MobStats.getInstance().sendPrefixed(sender, Language.MSG_NOPERMPURGE.toString());
+            MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_NOPERMPURGE.toString());
             return;
         }
 
@@ -38,16 +40,16 @@ public class CommandPurge extends AbstractCommand {
         if (args.length > 1) {
             if (args[1].equalsIgnoreCase("specific")) {
                 final int count = DatabaseAPI.purgeKillStats(days);
-                MobStats.getInstance().sendPrefixed(sender, Language.MSG_PURGED.toString(String.valueOf(count)));
+                MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_PURGED.parse(String.valueOf(count)));
             } else if (args[1].equalsIgnoreCase("standard")) {
                 final int count = DatabaseAPI.purgeStats(days);
-                MobStats.getInstance().sendPrefixed(sender, Language.MSG_PURGED.toString(String.valueOf(count)));
+                MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_PURGED.parse(String.valueOf(count)));
             } else if (args[1].equalsIgnoreCase("all")) {
                 final int count = DatabaseAPI.purgeKillStats(days) + DatabaseAPI.purgeStats(days);
-                MobStats.getInstance().sendPrefixed(sender, Language.MSG_PURGED.toString(String.valueOf(count)));
+                MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_PURGED.parse(String.valueOf(count)));
             } else if (args[1].equalsIgnoreCase("mobs")) {
                 final int count = DatabaseAPI.purgeMobStats(days);
-                MobStats.getInstance().sendPrefixed(sender, Language.MSG_PURGED.toString(String.valueOf(count)));
+                MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_PURGED.parse(String.valueOf(count)));
             } else {
                 MobStats.getInstance().sendPrefixed(sender, "/mobstats purge [specific | standard | mobs | all] [days]");
             }
@@ -84,11 +86,6 @@ public class CommandPurge extends AbstractCommand {
     @Override
     public List<String> getMain() {
         return Collections.singletonList("purge");
-    }
-
-    @Override
-    public String getName() {
-        return getClass().getName();
     }
 
     @Override

@@ -1,7 +1,7 @@
 package net.slipcor.mobstats.runnables;
 
+import net.slipcor.core.CoreDebugger;
 import net.slipcor.mobstats.MobStats;
-import net.slipcor.mobstats.classes.Debugger;
 
 import java.util.UUID;
 
@@ -9,7 +9,7 @@ public class DatabaseIncreaseKillsStreak implements Runnable {
     private final String name;
     private final UUID uuid;
 
-    static Debugger debugger = new Debugger(15);
+    public static CoreDebugger debugger;
     public DatabaseIncreaseKillsStreak(String name, UUID uuid) {
         this.name = name;
         this.uuid = uuid;

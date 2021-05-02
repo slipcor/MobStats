@@ -1,6 +1,6 @@
 package net.slipcor.mobstats.classes;
 
-import net.slipcor.mobstats.display.SortColumn;
+import net.slipcor.mobstats.api.InformationType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,14 +54,14 @@ public class EntityStatistic {
 
     public UUID getUid() { return uid; }
 
-    public Map<SortColumn, String> toStringMap() {
-        Map<SortColumn, String> result = new HashMap<>();
+    public Map<InformationType, String> toStringMap() {
+        Map<InformationType, String> result = new HashMap<>();
 
-        result.put(SortColumn.NAME, String.valueOf(name));
-        result.put(SortColumn.DEATHS, String.valueOf(deaths));
-        result.put(SortColumn.KILLS, String.valueOf(kills));
-        result.put(SortColumn.CURRENTSTREAK, String.valueOf(currentstreak));
-        result.put(SortColumn.STREAK, String.valueOf(streak));
+        result.put(InformationType.NAME, String.valueOf(name));
+        result.put(InformationType.DEATHS, String.valueOf(deaths));
+        result.put(InformationType.KILLS, String.valueOf(kills));
+        result.put(InformationType.CURRENTSTREAK, String.valueOf(currentstreak));
+        result.put(InformationType.STREAK, String.valueOf(streak));
 
         return result;
     }

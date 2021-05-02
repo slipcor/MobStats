@@ -1,31 +1,29 @@
 package net.slipcor.mobstats.api;
 
+import net.slipcor.core.CoreDebugger;
 import net.slipcor.mobstats.MobStats;
-import net.slipcor.mobstats.classes.Debugger;
-import net.slipcor.mobstats.classes.NameHandler;
 import net.slipcor.mobstats.classes.EntityStatistic;
-import net.slipcor.mobstats.core.Config;
-import net.slipcor.mobstats.core.Language;
+import net.slipcor.mobstats.classes.NameHandler;
 import net.slipcor.mobstats.display.SignDisplay;
-import net.slipcor.mobstats.display.SortColumn;
 import net.slipcor.mobstats.impl.FlatFileConnection;
 import net.slipcor.mobstats.impl.MySQLConnection;
 import net.slipcor.mobstats.impl.SQLiteConnection;
+import net.slipcor.mobstats.math.Formula;
+import net.slipcor.mobstats.math.MathFormulaManager;
 import net.slipcor.mobstats.runnables.CheckAndDo;
 import net.slipcor.mobstats.runnables.DatabaseFirstEntry;
 import net.slipcor.mobstats.runnables.DatabaseKillAddition;
 import net.slipcor.mobstats.runnables.DatabaseSetSpecific;
 import net.slipcor.mobstats.text.TextComponent;
 import net.slipcor.mobstats.text.TextFormatter;
+import net.slipcor.mobstats.yml.Config;
+import net.slipcor.mobstats.yml.Language;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -41,9 +39,11 @@ public final class DatabaseAPI {
 
     private static MobStats plugin = null;
 
-    private static final Debugger DEBUGGER = new Debugger(4);
+    public static CoreDebugger DEBUGGER;
 
     private static final TextComponent DATABASE_CONNECTED = new TextComponent("Warning: Database is not connected! Kills will not be recorded.");
+
+    private static Formula formula;
 
     /**
      * Entity A killed Entity B - use this to generally emulate a kill.
@@ -77,6 +77,11 @@ public final class DatabaseAPI {
 
         if (victim == null) {
             DEBUGGER.i("victim is null", attacker.getName());
+            if (plugin.config().getBoolean(Config.Entry.STATISTICS_CHECK_NEWBIES) && isNewbie(attacker)) {
+                DEBUGGER.i("killer has newbie status", attacker.getName());
+                TextFormatter.explainNewbieStatus(attacker, null);
+                return;
+            }
             incKill(attacker);
 
             if (plugin.getSQLHandler().allowsAsync()) {
@@ -97,6 +102,11 @@ public final class DatabaseAPI {
 
         if (attacker == null) {
             DEBUGGER.i("attacker is null", victim.getName());
+            if (plugin.config().getBoolean(Config.Entry.STATISTICS_CHECK_NEWBIES) && isNewbie(victim)) {
+                DEBUGGER.i("victim has newbie status", victim.getName());
+                TextFormatter.explainNewbieStatus(null, victim);
+                return;
+            }
             incDeath(victim);
 
             if (plugin.getSQLHandler().allowsAsync()) {
@@ -266,7 +276,7 @@ public final class DatabaseAPI {
             result = plugin.getSQLHandler().getStats(entity);
             if (result == null) {
                 String[] output = new String[1];
-                output[0] = Language.INFO_PLAYERNOTFOUND.toString(NameHandler.getName(entity));
+                output[0] = Language.MSG.INFO_PLAYERNOTFOUND.parse(NameHandler.getName(entity));
                 return output;
             }
         } catch (SQLException e) {
@@ -274,9 +284,9 @@ public final class DatabaseAPI {
         }
 
         if (result == null) {
-            String[] output = new String[1];
-            output[0] = Language.INFO_PLAYERNOTFOUND.toString(NameHandler.getName(entity));
-            output[1] = Language.INFO_PLAYERNOTFOUND2.toString();
+            String[] output = new String[2];
+            output[0] = Language.MSG.INFO_PLAYERNOTFOUND.parse(NameHandler.getName(entity));
+            output[1] = Language.MSG.INFO_PLAYERNOTFOUND2.toString();
             return output;
         }
         String[] output;
@@ -287,11 +297,11 @@ public final class DatabaseAPI {
         int deaths = result.getDeaths();
         int streak = result.getCurrentStreak();
         int maxStreak = result.getMaxStreak();
-        Double ratio = calculateRatio(kills, deaths, maxStreak, streak);
+        Double ratio = calculateRatio(result);
         DecimalFormat df = new DecimalFormat("#.##");
 
         if (plugin.config().getBoolean(Config.Entry.MESSAGES_OVERRIDES)) {
-            List<String> lines = plugin.config().getList(Config.Entry.MESSAGES_OVERRIDE_LIST);
+            List<String> lines = plugin.config().getStringList(Config.Entry.MESSAGES_OVERRIDE_LIST, new ArrayList<>());
             output = new String[lines.size()];
 
             for (int i = 0; i < lines.size(); i++) {
@@ -313,23 +323,23 @@ public final class DatabaseAPI {
 
         output = new String[6];
 
-        output[0] = Language.INFO_FORMAT.toString(
-                Language.INFO_NAME.toString(),
+        output[0] = Language.MSG.INFO_FORMAT.parse(
+                Language.MSG.INFO_NAME.toString(),
                 name);
-        output[1] = Language.INFO_FORMAT.toString(
-                Language.INFO_KILLS.toString(),
+        output[1] = Language.MSG.INFO_FORMAT.parse(
+                Language.MSG.INFO_KILLS.toString(),
                 String.valueOf(kills));
-        output[2] = Language.INFO_FORMAT.toString(
-                Language.INFO_DEATHS.toString(),
+        output[2] = Language.MSG.INFO_FORMAT.parse(
+                Language.MSG.INFO_DEATHS.toString(),
                 String.valueOf(deaths));
-        output[3] = Language.INFO_FORMAT.toString(
-                Language.INFO_RATIO.toString(),
+        output[3] = Language.MSG.INFO_FORMAT.parse(
+                Language.MSG.INFO_RATIO.toString(),
                 df.format(ratio));
-        output[4] = Language.INFO_FORMAT.toString(
-                Language.INFO_STREAK.toString(),
+        output[4] = Language.MSG.INFO_FORMAT.parse(
+                Language.MSG.INFO_STREAK.toString(),
                 String.valueOf(streak));
-        output[5] = Language.INFO_FORMAT.toString(
-                Language.INFO_MAXSTREAK.toString(),
+        output[5] = Language.MSG.INFO_FORMAT.parse(
+                Language.MSG.INFO_MAXSTREAK.toString(),
                 String.valueOf(maxStreak));
         return output;
     }
@@ -383,46 +393,46 @@ public final class DatabaseAPI {
 
         if (method.equals("yml")) {
             if (MobStats.getInstance().getSQLHandler() instanceof FlatFileConnection) {
-                MobStats.getInstance().sendPrefixed(sender, Language.ERROR_DATABASE_METHOD.toString());
+                MobStats.getInstance().sendPrefixed(sender, Language.MSG.ERROR_DATABASE_METHOD.toString());
                 return null;
             }
 
-            dbTable = config.get(Config.Entry.YML_TABLE);
+            dbTable = config.getString(Config.Entry.YML_TABLE);
             if (config.getBoolean(Config.Entry.STATISTICS_COLLECT_PRECISE) &&
                 config.getBoolean(Config.Entry.YML_COLLECT_PRECISE)) {
-                dbKillTable = config.get(Config.Entry.MYSQL_KILLTABLE);
+                dbKillTable = config.getString(Config.Entry.MYSQL_KILLTABLE);
             }
 
             dbHandler = new FlatFileConnection(dbTable, dbKillTable);
         } else if (method.equals("sqlite")) {
             if (MobStats.getInstance().getSQLHandler() instanceof SQLiteConnection) {
-                MobStats.getInstance().sendPrefixed(sender, Language.ERROR_DATABASE_METHOD.toString());
+                MobStats.getInstance().sendPrefixed(sender, Language.MSG.ERROR_DATABASE_METHOD.toString());
                 return null;
             }
 
-            dbDatabase = config.get(Config.Entry.SQLITE_FILENAME);
+            dbDatabase = config.getString(Config.Entry.SQLITE_FILENAME);
 
-            dbTable = config.get(Config.Entry.SQLITE_TABLE);
+            dbTable = config.getString(Config.Entry.SQLITE_TABLE);
             if (config.getBoolean(Config.Entry.STATISTICS_COLLECT_PRECISE)) {
-                dbKillTable = config.get(Config.Entry.SQLITE_KILLTABLE);
+                dbKillTable = config.getString(Config.Entry.SQLITE_KILLTABLE);
             }
 
             dbHandler = new SQLiteConnection(dbDatabase, dbTable, dbKillTable);
         } else if (method.equals("mysql")) {
             if (MobStats.getInstance().getSQLHandler() instanceof MySQLConnection) {
-                MobStats.getInstance().sendPrefixed(sender, Language.ERROR_DATABASE_METHOD.toString());
+                MobStats.getInstance().sendPrefixed(sender, Language.MSG.ERROR_DATABASE_METHOD.toString());
                 return null;
             }
 
-            dbHost = config.get(Config.Entry.MYSQL_HOST);
-            dbUser = config.get(Config.Entry.MYSQL_USERNAME);
-            dbPass = config.get(Config.Entry.MYSQL_PASSWORD);
-            dbDatabase = config.get(Config.Entry.MYSQL_DATABASE);
-            dbTable = config.get(Config.Entry.MYSQL_TABLE);
-            dbOptions = config.get(Config.Entry.MYSQL_OPTIONS);
+            dbHost = config.getString(Config.Entry.MYSQL_HOST);
+            dbUser = config.getString(Config.Entry.MYSQL_USERNAME);
+            dbPass = config.getString(Config.Entry.MYSQL_PASSWORD);
+            dbDatabase = config.getString(Config.Entry.MYSQL_DATABASE);
+            dbTable = config.getString(Config.Entry.MYSQL_TABLE);
+            dbOptions = config.getString(Config.Entry.MYSQL_OPTIONS);
 
             if (config.getBoolean(Config.Entry.STATISTICS_COLLECT_PRECISE)) {
-                dbKillTable = config.get(Config.Entry.MYSQL_KILLTABLE);
+                dbKillTable = config.getString(Config.Entry.MYSQL_KILLTABLE);
             }
 
             dbPort = config.getInt(Config.Entry.MYSQL_PORT);
@@ -702,27 +712,23 @@ public final class DatabaseAPI {
                 switch (sort) {
 
                     case "KILLS":
-                        sortedValues.add(Language.INFO_FORMAT.toString(
+                        sortedValues.add(Language.MSG.INFO_FORMAT.parse(
                                 entry.getName(), String.valueOf(entry.getKills())));
                         break;
                     case "DEATHS":
-                        sortedValues.add(Language.INFO_FORMAT.toString(
+                        sortedValues.add(Language.MSG.INFO_FORMAT.parse(
                                 entry.getName(),String.valueOf(entry.getDeaths())));
                         break;
                     case "STREAK":
-                        sortedValues.add(Language.INFO_FORMAT.toString(
+                        sortedValues.add(Language.MSG.INFO_FORMAT.parse(
                                 entry.getName(),String.valueOf(entry.getMaxStreak())));
                         break;
                     case "CURRENTSTREAK":
-                        sortedValues.add(Language.INFO_FORMAT.toString(
+                        sortedValues.add(Language.MSG.INFO_FORMAT.parse(
                                 entry.getName(),String.valueOf(entry.getCurrentStreak())));
                         break;
                     default:
-                        results.put(
-                                entry.getName(),
-                                calculateRatio(entry.getKills(),
-                                        entry.getDeaths(),
-                                        entry.getMaxStreak(), EntityStatisticsBuffer.getStreak(entry.getUid())));
+                        results.put(entry.getName(), calculateRatio(entry));
                         break;
                 }
             }
@@ -793,27 +799,23 @@ public final class DatabaseAPI {
                 switch (sort) {
 
                     case "KILLS":
-                        sortedValues.add(Language.INFO_FORMAT.toString(
+                        sortedValues.add(Language.MSG.INFO_FORMAT.parse(
                                 entry.getName(), String.valueOf(entry.getKills())));
                         break;
                     case "DEATHS":
-                        sortedValues.add(Language.INFO_FORMAT.toString(
+                        sortedValues.add(Language.MSG.INFO_FORMAT.parse(
                                 entry.getName(),String.valueOf(entry.getDeaths())));
                         break;
                     case "STREAK":
-                        sortedValues.add(Language.INFO_FORMAT.toString(
+                        sortedValues.add(Language.MSG.INFO_FORMAT.parse(
                                 entry.getName(),String.valueOf(entry.getMaxStreak())));
                         break;
                     case "CURRENTSTREAK":
-                        sortedValues.add(Language.INFO_FORMAT.toString(
+                        sortedValues.add(Language.MSG.INFO_FORMAT.parse(
                                 entry.getName(),String.valueOf(entry.getCurrentStreak())));
                         break;
                     default:
-                        results.put(
-                                entry.getName(),
-                                calculateRatio(entry.getKills(),
-                                        entry.getDeaths(),
-                                        entry.getMaxStreak(), EntityStatisticsBuffer.getStreak(entry.getUid())));
+                        results.put(entry.getName(), calculateRatio(entry));
                         break;
                 }
             }
@@ -832,8 +834,8 @@ public final class DatabaseAPI {
         return sortParse(results, count);
     }
 
-    public static List<Map<SortColumn, String>> detailedTop(int max, SortColumn column) {
-        List<Map<SortColumn, String>> result = new ArrayList<>();
+    public static List<Map<InformationType, String>> detailedTop(int max, InformationType column) {
+        List<Map<InformationType, String>> result = new ArrayList<>();
 
         try {
             String sort = "";
@@ -847,7 +849,7 @@ public final class DatabaseAPI {
                     sort = column.name().toLowerCase();
                     break;
             }
-            List<EntityStatistic> stats = plugin.getSQLHandler().getTopSorted(max, sort, column == SortColumn.DEATHS);
+            List<EntityStatistic> stats = plugin.getSQLHandler().getTopSorted(max, sort, column == InformationType.DEATHS);
 
             for (EntityStatistic stat : stats) {
                 result.add(stat.toStringMap());
@@ -874,7 +876,27 @@ public final class DatabaseAPI {
         EntityStatisticsBuffer.clear(uuid);
     }
 
-    private static ScriptEngine scriptEngine;
+    /**
+     * Calculate the kill / death ratio as defined in the config
+     *
+     * @param statistic the EntityStatistic to fill in
+     * @return the calculated value
+     */
+    public static Double calculateRatio(EntityStatistic statistic) {
+        if (plugin.config().getBoolean(Config.Entry.STATISTICS_KD_SIMPLE)) {
+            if (statistic.getDeaths() < 1) {
+                return (double) statistic.getKills();
+            }
+            return ((double) statistic.getKills()) / statistic.getDeaths();
+        }
+
+        if (formula == null) {
+            String string = plugin.config().getString(Config.Entry.STATISTICS_KD_CALCULATION);
+            formula = MathFormulaManager.getInstance().parse(string);
+        }
+
+        return formula.evaluate(statistic);
+    }
 
     /**
      * Calculate the kill / death ratio as defined in the config
@@ -887,79 +909,11 @@ public final class DatabaseAPI {
      */
     public static Double calculateRatio(final int kills, final int deaths, final int streak,
                                         final int maxstreak) {
-        if (plugin.config().getBoolean(Config.Entry.STATISTICS_KD_SIMPLE)) {
-            if (deaths < 1) {
-                return 0d;
-            }
-            return ((double) kills) / deaths;
-        }
-
-        String string = plugin.config().get(Config.Entry.STATISTICS_KD_CALCULATION);
-
-        string = string.replaceAll("&k", "(" + kills + ")");
-        string = string.replaceAll("&d", "(" + deaths + ")");
-        string = string.replaceAll("&s", "(" + streak + ")");
-        string = string.replaceAll("&m", "(" + maxstreak + ")");
-
-        if (scriptEngine == null) {
-            ScriptEngineManager mgr = new ScriptEngineManager();
-            scriptEngine = mgr.getEngineByName("JavaScript");
-
-            // Java 8 compatibility
-            if (scriptEngine == null) {
-                mgr = new ScriptEngineManager(null);
-                scriptEngine = mgr.getEngineByName("nashorn");
-            }
-        }
-
-        StringBuilder saneString = new StringBuilder();
-
-        for (char c : string.toCharArray()) {
-            switch (c) {
-                case '0':
-                case '1':
-                case '2':
-                case '3':
-                case '4':
-                case '5':
-                case '6':
-                case '7':
-                case '8':
-                case '9':
-                case '-':
-                case '+':
-                case '*':
-                case '/':
-                case '(':
-                case ')':
-                case '<':
-                case '>':
-                case '?':
-                case ':':
-                case '=':
-                    saneString.append(c);
-                    break;
-                default:
-            }
-        }
-
-        try {
-            Object value = scriptEngine.eval(saneString.toString());
-
-            if (value instanceof Double) {
-                return (Double) value;
-            } else if (value instanceof Integer) {
-                int i = (Integer) value;
-                return (double) i;
-            }
-            plugin.getLogger().severe("SaneString: " + value.toString());
-
-            return 0d;
-        } catch (ScriptException e) {
-            plugin.getLogger().severe("SaneString: " + saneString.toString());
-            e.printStackTrace();
-            return 0d;
-        }
+        return calculateRatio(
+                new EntityStatistic(
+                        "legacy", kills, deaths, maxstreak, streak, 0, new UUID(0, 0)
+                )
+        );
     }
 
     /**
@@ -1029,7 +983,7 @@ public final class DatabaseAPI {
 
         for (String key : results.keySet()) {
             sort[pos] = results.get(key);
-            result[pos] = Language.INFO_FORMAT.toString(key, df.format(sort[pos]));
+            result[pos] = Language.MSG.INFO_FORMAT.parse(key, df.format(sort[pos]));
             pos++;
         }
 
@@ -1068,5 +1022,6 @@ public final class DatabaseAPI {
      */
     public static void refresh() {
         EntityStatisticsBuffer.refresh();
+        formula = null;
     }
 }

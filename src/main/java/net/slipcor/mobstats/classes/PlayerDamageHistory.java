@@ -1,7 +1,6 @@
 package net.slipcor.mobstats.classes;
 
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 
 import java.util.*;
 

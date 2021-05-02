@@ -1,7 +1,7 @@
 package net.slipcor.mobstats.runnables;
 
 import net.slipcor.mobstats.api.LeaderboardBuffer;
-import net.slipcor.mobstats.core.Language;
+import net.slipcor.mobstats.yml.Language;
 import org.bukkit.command.CommandSender;
 
 public class SendPlayerTop implements Runnable {
@@ -27,15 +27,15 @@ public class SendPlayerTop implements Runnable {
     @Override
     public void run() {
         String[] top = LeaderboardBuffer.top(amount, name);
-        sender.sendMessage(Language.HEAD_LINE.toString());
-        sender.sendMessage(Language.HEAD_HEADLINE.toString(
+        sender.sendMessage(Language.MSG.HEAD_LINE.toString());
+        sender.sendMessage(Language.MSG.HEAD_HEADLINE.parse(
                 displayAmount,
-                Language.valueOf("HEAD_" + (name.equals("K-D") ? "RATIO" : name)).toString()));
-        sender.sendMessage(Language.HEAD_LINE.toString());
+                Language.MSG.valueOf("HEAD_" + (name.equals("K-D") ? "RATIO" : name)).toString()));
+        sender.sendMessage(Language.MSG.HEAD_LINE.toString());
 
         int pos = 1;
         for (String stat : top) {
-            sender.sendMessage(Language.INFO_NUMBERS.toString(String.valueOf(pos++), stat));
+            sender.sendMessage(Language.MSG.INFO_NUMBERS.parse(String.valueOf(pos++), stat));
         }
     }
 }

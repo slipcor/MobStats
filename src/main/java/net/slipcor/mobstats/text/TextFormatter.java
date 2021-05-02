@@ -1,12 +1,11 @@
 package net.slipcor.mobstats.text;
 
 import net.slipcor.mobstats.MobStats;
-import net.slipcor.mobstats.core.Config;
-import net.slipcor.mobstats.core.Language;
 import net.slipcor.mobstats.classes.NameHandler;
+import net.slipcor.mobstats.yml.Config;
+import net.slipcor.mobstats.yml.Language;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -20,7 +19,7 @@ public class TextFormatter {
 
 
     public static TextComponent[] addPrefix(TextComponent[] message) {
-        TextComponent[] prefix = TextFormatter.toTextComponent(Language.MSG_PREFIX.toString());
+        TextComponent[] prefix = TextFormatter.toTextComponent(Language.MSG.MSG_PREFIX.toString());
         TextComponent[] result = Arrays.copyOf(prefix, message.length + prefix.length);
         System.arraycopy(message, 0, result, prefix.length, message.length);
         return result;
@@ -156,15 +155,25 @@ public class TextFormatter {
     public static void explainNewbieStatus(Entity attacker, Entity victim) {
         List<TextComponent> message = new ArrayList<>();
 
-        message.add(new TextComponent(NameHandler.getName(attacker)).setColor(ChatColor.YELLOW));
+        String killer = attacker == null ? "something unknown" : NameHandler.getName(attacker);
+        String killed = victim == null ? "nothing" : NameHandler.getName(victim);
+
+        message.add(new TextComponent(killer).setColor(ChatColor.YELLOW));
         message.add(new TextComponent(" killing "));
-        message.add(new TextComponent(NameHandler.getName(victim)).setColor(ChatColor.YELLOW));
+        message.add(new TextComponent(killed).setColor(ChatColor.YELLOW));
         message.add(new TextComponent(" was not recorded as one or both players have 'newbie' status. Add permission node '"));
         message.add(new TextComponent("mobstats.nonewbie").setColor(ChatColor.YELLOW));
         message.add(new TextComponent("' to both players to fix this."));
 
-        MobStats.getInstance().sendPrefixedOP(Arrays.asList(attacker, victim),
-                message.toArray(new TextComponent[0]));
+        List<CommandSender> list = new ArrayList<>();
+        if (attacker instanceof Player) {
+            list.add(attacker);
+        }
+        if (victim instanceof Player) {
+            list.add(victim);
+        }
+
+        MobStats.getInstance().sendPrefixedOP(list, message.toArray(new TextComponent[0]));
     }
 
     public static void explainIgnoredWorld(Entity player) {

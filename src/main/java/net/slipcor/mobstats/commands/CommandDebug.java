@@ -1,34 +1,35 @@
 package net.slipcor.mobstats.commands;
 
+import net.slipcor.core.CoreCommand;
+import net.slipcor.core.CorePlugin;
 import net.slipcor.mobstats.MobStats;
-import net.slipcor.mobstats.classes.Debugger;
-import net.slipcor.mobstats.core.Language;
+import net.slipcor.mobstats.yml.Language;
 import org.bukkit.command.CommandSender;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class CommandDebug extends AbstractCommand {
-    public CommandDebug() {
-        super(new String[]{"mobstats.debug"});
+public class CommandDebug extends CoreCommand {
+    public CommandDebug(CorePlugin plugin) {
+        super(plugin, "mobstats.debug", Language.MSG.ERROR_INVALID_ARGUMENT_COUNT);
     }
 
     @Override
     public void commit(CommandSender sender, String[] args) {
         if (!hasPerms(sender)) {
-            MobStats.getInstance().sendPrefixed(sender, Language.MSG_NOPERMDEBUG.toString());
+            MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_NOPERMDEBUG.toString());
             return;
         }
         if (!argCountValid(sender, args, new Integer[]{2})) {
             return;
         }
-        Debugger.destroy();
+        MobStats.getInstance().destroyDebugger();
         if (args.length > 1) {
             MobStats.getInstance().getConfig().set("debug", args[1]);
         }
 
-        Debugger.load(MobStats.getInstance(), sender);
+        MobStats.getInstance().loadDebugger("debug", sender);
     }
 
     public List<String> completeTab(String[] args) {
@@ -63,11 +64,6 @@ public class CommandDebug extends AbstractCommand {
     @Override
     public List<String> getMain() {
         return Collections.singletonList("debug");
-    }
-
-    @Override
-    public String getName() {
-        return getClass().getName();
     }
 
     @Override
