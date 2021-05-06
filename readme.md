@@ -55,7 +55,7 @@ This plugin will keep records of how many mob kills, deaths, kills in a row a pl
 
 ## Changelog
 
-- v0.1.9 - fix default language file
+- v0.1.10 - try to fix dependencies with better encryption
 - [read more](doc/changelog.md)
 
 ***

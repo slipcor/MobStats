@@ -1,5 +1,6 @@
 # v0.1 Changelog
 
+- v0.1.10 - try to fix dependencies with better encryption
 - v0.1.9 - fix default language file
 - v0.1.8 - fix some NPEs, fix comments, remove MobArena debugging (introduced in last commit)
 - v0.1.7 - use my Core API and the following upstream issues:
