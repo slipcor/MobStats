@@ -55,7 +55,7 @@ This plugin will keep records of how many mob kills, deaths, kills in a row a pl
 
 ## Changelog
 
-- v0.1.8 - fix some NPEs, fix comments, remove MobArena debugging (introduced in last commit)
+- v0.1.9 - fix default language file
 - [read more](doc/changelog.md)
 
 ***
