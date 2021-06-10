@@ -111,7 +111,7 @@ public class Config extends CoreConfig {
         UPDATE(Type.COMMENT, "update", null, 
                 "=== [ Updater Settings ] ==="),
         UPDATE_MODE(Type.STRING, "update.mode", "both", 
-                "what to do? Valid values: off, announce, download, both"),
+                "what to do? Valid values: disable, announce, download, both"),
         UPDATE_TYPE(Type.STRING, "update.type", "beta", 
                 "which type of branch to get updates? Valid values: dev, alpha, beta, release"),
 
