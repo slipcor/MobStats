@@ -62,7 +62,7 @@ This plugin will keep records of how many mob kills, deaths, kills in a row a pl
 
 ## Phoning home
 
-By default, the server contacts www.bstats.org to notify that you are using my plugin.
+By default, the server contacts [bstats.org](https://bstats.org) to notify that you are using my plugin.
 
 Please refer to their website to learn about what they collect and how they handle the data.
 
