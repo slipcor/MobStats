@@ -1,5 +1,6 @@
 # v0.1 Changelog
 
+- v0.1.12 - clear up sorting (top/flop) code, allow multiline announcements
 - v0.1.11 - improve updater setting comment to offer valid disabling value
 - v0.1.10 - try to fix dependencies with better encryption
 - v0.1.9 - fix default language file

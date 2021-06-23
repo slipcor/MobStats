@@ -701,9 +701,13 @@ public final class DatabaseAPI {
 
             int limit = sort.equals("K-D") ? Math.min(count, 50) : count;
 
-            result = plugin.getSQLHandler().getTopSorted(limit, order,
-                    sort.equals("DEATHS") &&
-                            !MobStats.getInstance().config().getBoolean(Config.Entry.STATISTICS_DEATHS_DESCENDING));
+            boolean isAscending = false;
+
+            if (!MobStats.getInstance().config().getBoolean(Config.Entry.STATISTICS_DEATHS_DESCENDING) && sort.equals("DEATHS")) {
+                isAscending = true;
+            }
+
+            result = plugin.getSQLHandler().getTopSorted(limit, order, isAscending);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -789,8 +793,13 @@ public final class DatabaseAPI {
 
             int limit = sort.equals("K-D") ? Math.min(count, 50) : count;
 
-            result = plugin.getSQLHandler().getTopSorted(limit, order, !sort.equals("DEATHS") ||
-                    !MobStats.getInstance().config().getBoolean(Config.Entry.STATISTICS_DEATHS_DESCENDING));
+            boolean isAscending = true;
+
+            if (!MobStats.getInstance().config().getBoolean(Config.Entry.STATISTICS_DEATHS_DESCENDING) && sort.equals("DEATHS")) {
+                isAscending = false;
+            }
+
+            result = plugin.getSQLHandler().getTopSorted(limit, order, isAscending);
         } catch (SQLException e) {
             e.printStackTrace();
         }
