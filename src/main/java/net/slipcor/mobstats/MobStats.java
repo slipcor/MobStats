@@ -4,6 +4,7 @@ import net.slipcor.core.*;
 import net.slipcor.mobstats.api.DatabaseAPI;
 import net.slipcor.mobstats.api.DatabaseConnection;
 import net.slipcor.mobstats.classes.NameHandler;
+import net.slipcor.mobstats.classes.PlaceholderAPIAbbreviationHook;
 import net.slipcor.mobstats.classes.PlaceholderAPIHook;
 import net.slipcor.mobstats.commands.*;
 import net.slipcor.mobstats.display.SignDisplay;
@@ -31,6 +32,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,6 +74,7 @@ public class MobStats extends CorePlugin {
     // commands
     private final Map<String, CoreCommand> commandMap = new HashMap<>();
     private final List<CoreCommand> commandList = new ArrayList<>();
+    private BukkitTask reloadTask = null;
 
     public static MobStats getInstance() {
         return instance;
@@ -162,8 +165,15 @@ public class MobStats extends CorePlugin {
 
                 for (String message : msgList) {
                     if (!message.isEmpty()) {
-                        Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', message)
-                                .replace("%entity%", NameHandler.getName(entity)));
+                        String replacement = ChatColor.translateAlternateColorCodes('&', message)
+                                .replace("%entity%", NameHandler.getName(entity));
+                        if (message.contains("%killed%")) {
+                            String lastKill = DatabaseAPI.getLastKilled(entity.getName());
+                            if (lastKill != null) {
+                                replacement = replacement.replace("%killed%", lastKill);
+                            }
+                        }
+                        Bukkit.broadcastMessage(replacement);
                     }
                 }
             }
@@ -187,10 +197,16 @@ public class MobStats extends CorePlugin {
 
                 for (String command : cmdList) {
                     if (!command.isEmpty()) {
-                        Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(),
-                                command
-                                        .replace("%entity%", NameHandler.getName(entity))
-                                        .replace("%entityid%", entity.getUniqueId().toString()));
+                        String replacement = ChatColor.translateAlternateColorCodes('&', command)
+                                .replace("%entity%", NameHandler.getName(entity))
+                                .replace("%entityid%", entity.getUniqueId().toString());
+                        if (command.contains("%killed%")) {
+                            String lastKill = DatabaseAPI.getLastKilled(entity.getName());
+                            if (lastKill != null) {
+                                replacement = replacement.replace("%killed%", lastKill);
+                            }
+                        }
+                        Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), replacement);
                     }
                 }
             }
@@ -229,6 +245,22 @@ public class MobStats extends CorePlugin {
         new CommandTop(this).load(commandList, commandMap);
         new CommandReload(this).load(commandList, commandMap);
         new CommandWipe(this).load(commandList, commandMap);
+
+        if (dbHandler != null) {
+            int seconds = config().getInt(Config.Entry.STATISTICS_FORCE_RELOAD_INTERVAL);
+            if (seconds > 0) {
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        DatabaseAPI.refresh();
+                    }
+                };
+                if (this.reloadTask != null) {
+                    reloadTask.cancel();
+                }
+                this.reloadTask = Bukkit.getScheduler().runTaskTimer(this, runnable, 20 * seconds, 20 * seconds);
+            }
+        }
     }
 
     /**
@@ -485,8 +517,13 @@ public class MobStats extends CorePlugin {
         }
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            getLogger().info("MobStats - PlaceholderAPI found.");
-            new PlaceholderAPIHook().register();
+            if (configHandler.getBoolean(Config.Entry.STATISTICS_SHORT_PLACEHOLDERS)) {
+                getLogger().info("MobStats - PlaceholderAPI found - trying to use placeholders");
+                new PlaceholderAPIAbbreviationHook().register();
+            } else {
+                getLogger().info("MobStats - PlaceholderAPI found.");
+                new PlaceholderAPIHook().register();
+            }
         }
 
         loadDebugger("debug", Bukkit.getConsoleSender());

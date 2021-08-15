@@ -45,6 +45,8 @@ public final class DatabaseAPI {
 
     private static Formula formula;
 
+    private static Map<String, String> lastKill = new HashMap<>();
+
     /**
      * Entity A killed Entity B - use this to generally emulate a kill.
      *
@@ -134,6 +136,7 @@ public final class DatabaseAPI {
         }
         // here we go, PVE!
         DEBUGGER.i("Counting kill by " + attacker.getName(), victim);
+        lastKill.put(attacker.getName(), NameHandler.getName(victim));
 
         incKill(attacker);
         incDeath(victim);
@@ -238,6 +241,10 @@ public final class DatabaseAPI {
         }
 
         return result < 0 ? 0 : result;
+    }
+
+    public static String getLastKilled(String killer) {
+        return lastKill.get(killer);
     }
 
     /**

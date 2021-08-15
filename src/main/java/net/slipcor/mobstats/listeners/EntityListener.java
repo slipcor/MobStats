@@ -52,7 +52,7 @@ public class EntityListener implements Listener {
      *
      * @param event the EntityDamageByEntityEvent
      */
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onPlayerDamage(EntityDamageByEntityEvent event) {
         Entity attacked = event.getEntity();
         Entity attacker = null;
@@ -134,6 +134,8 @@ public class EntityListener implements Listener {
 
         final Entity player = event.getEntity();
         Debugger.i("Player killed!", player);
+
+        lastDamage.remove(player.getUniqueId()); // clear map for next kill
 
         if (notCountingEntity(player)) {
             Debugger.i("not counting this one!");

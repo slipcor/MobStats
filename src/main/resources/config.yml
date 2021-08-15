@@ -56,6 +56,8 @@ statistics:
   resetKillstreakOnQuit: false
   # seconds to wait before the top/flop leaderboard values will query the database again
   leaderboardRefresh: 60
+  # try using super short placeholders
+  shortPlaceholders: false
   # announce lines from streak_announcements.yml on specific streak values
   streakAnnouncements: false
   # issue commands from streak_commands.yml on specific streak values
@@ -70,6 +72,8 @@ statistics:
   killDeathSimple: false
   # time in seconds to consider a former kill an assist
   assistSeconds: 60
+  # force reload the database from outside changes after how many seconds
+  forceReloadInterval: -1
 # === [ Integration into other Plugins ] ===
 other:
   # use players' display names

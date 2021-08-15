@@ -47,15 +47,16 @@ This plugin will keep records of how many mob kills, deaths, kills in a row a pl
 
 - [API](doc/api.md)
 - [Commands](doc/commands.md)
-- [Permissions](doc/permissions.md)
 - [Configuration](doc/configuration.md)
 - [LeaderBoards](doc/leaderboards.md)
+- [Permissions](doc/permissions.md)
+- [PAPI Placeholders](doc/placeholders.md)
 
 ***
 
 ## Changelog
 
-- v0.1.12 - clear up sorting (top/flop) code, allow multiline announcements
+- v0.1.13 - pull several fixes from upstream
 - [read more](doc/changelog.md)
 
 ***

@@ -25,8 +25,8 @@ This documentation is not extensive, but explains up the methods that I would de
 
 ### top - get the top stats 
 
-    int value;     // how many entries to get (max: 10);
-    String value;  // the information to get and to sort by
+    int value = 10;        // how many entries to get;
+    String type = "kills"; // the information to get and to sort by
     
     // valid values for type: "kills", "deaths", "streak", "currentstreak"
     String[] lines = LeaderboardBuffer.top(value, type);
@@ -36,8 +36,8 @@ This documentation is not extensive, but explains up the methods that I would de
 
 ### flop - get the bottom stats
 
-    int value;     // how many entries to get (max: 10);
-    String value;  // the information to get and to sort by
+    int value = 10;        // how many entries to get;
+    String type = "kills"; // the information to get and to sort by
     
     // valid values for type: "kills", "deaths", "streak", "currentstreak"
     String[] lines = LeaderboardBuffer.flop(value, type);

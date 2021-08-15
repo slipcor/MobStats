@@ -1,5 +1,15 @@
 # v0.1 Changelog
 
+- v0.1.13 - pull several fixes from upstream:
+  - **FIX** - prevent NPE due to null players
+  - **FIX** - do no longer counter "last damage" for kill after death
+  - **FIX** - reduce priority and generally wait for WorldEdit specifically to allow for PVP cancelling before we care about it
+  - **FIX** - reload the plugin when changing the config via command, so that most changes take immediate effect 
+  - **FEAT** - support short placeholders
+  - **FEAT** - support %killed% as placeholder for announcements and commands
+  - **FEAT** - allow to force reload the database after X seconds for multi-server setups
+  - **DOC** - add placeholders to documentation
+  - **DOC** - reword permissions documentation
 - v0.1.12 - clear up sorting (top/flop) code, allow multiline announcements
 - v0.1.11 - improve updater setting comment to offer valid disabling value
 - v0.1.10 - try to fix dependencies with better encryption
