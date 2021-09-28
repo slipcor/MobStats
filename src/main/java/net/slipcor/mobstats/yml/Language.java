@@ -3,7 +3,6 @@ package net.slipcor.mobstats.yml;
 import net.slipcor.core.CoreLanguage;
 import net.slipcor.core.CorePlugin;
 import net.slipcor.core.LanguageEntry;
-import org.bukkit.ChatColor;
 
 public class Language extends CoreLanguage {
     public Language(CorePlugin plugin) {
@@ -112,11 +111,11 @@ public class Language extends CoreLanguage {
             for (int pos = 0; pos < args.length; pos++) {
                 result = result.replace("%" + pos + "%", args[pos]);
             }
-            return ChatColor.translateAlternateColorCodes('&', result);
+            return Language.colorize(result);
         }
 
         public String parse() {
-            return ChatColor.translateAlternateColorCodes('&', toString());
+            return Language.colorize(toString());
         }
 
         @Override

@@ -56,7 +56,7 @@ This plugin will keep records of how many mob kills, deaths, kills in a row a pl
 
 ## Changelog
 
-- v0.1.13 - pull several fixes from upstream
+- v0.1.14 - support hex colors (Core Update)
 - [read more](doc/changelog.md)
 
 ***

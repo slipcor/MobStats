@@ -19,7 +19,6 @@ import net.slipcor.mobstats.text.TextFormatter;
 import net.slipcor.mobstats.yml.Config;
 import net.slipcor.mobstats.yml.Language;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -321,7 +320,7 @@ public final class DatabaseAPI {
                 line = line.replace("%r", df.format(ratio));
                 line = line.replace("%s", String.valueOf(streak));
 
-                output[i] = ChatColor.translateAlternateColorCodes('&', line);
+                output[i] = Language.colorize(line);
             }
 
             return output;

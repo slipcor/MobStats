@@ -1,5 +1,6 @@
 # v0.1 Changelog
 
+- v0.1.14 - support hex colors (Core Update)
 - v0.1.13 - pull several fixes from upstream:
   - **FIX** - prevent NPE due to null players
   - **FIX** - do no longer counter "last damage" for kill after death

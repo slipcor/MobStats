@@ -165,7 +165,7 @@ public class MobStats extends CorePlugin {
 
                 for (String message : msgList) {
                     if (!message.isEmpty()) {
-                        String replacement = ChatColor.translateAlternateColorCodes('&', message)
+                        String replacement = Language.colorize(message)
                                 .replace("%entity%", NameHandler.getName(entity));
                         if (message.contains("%killed%")) {
                             String lastKill = DatabaseAPI.getLastKilled(entity.getName());
@@ -197,7 +197,7 @@ public class MobStats extends CorePlugin {
 
                 for (String command : cmdList) {
                     if (!command.isEmpty()) {
-                        String replacement = ChatColor.translateAlternateColorCodes('&', command)
+                        String replacement = Language.colorize(command)
                                 .replace("%entity%", NameHandler.getName(entity))
                                 .replace("%entityid%", entity.getUniqueId().toString());
                         if (command.contains("%killed%")) {
