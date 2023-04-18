@@ -78,7 +78,7 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
                 int pos = Integer.parseInt(s.split("_")[2]);
                 String name = split[1].toUpperCase();
 
-                if (split.length > 3) {
+                if (split.length > 3 && !(s.endsWith("_name") || s.endsWith("_value"))) {
                     return Language.MSG.STATISTIC_HEADLINE_TOP.parse(
                             String.valueOf(pos),
                             Language.MSG.valueOf("HEAD_" + name).parse());
@@ -88,6 +88,12 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
 
                 if (top.length < pos) {
                     return ""; // we do not have enough entries, return empty
+                }
+
+                if (s.endsWith("_name")) {
+                    return top[pos-1].split(":")[0];
+                } else if (s.endsWith("_value")) {
+                    return top[pos-1].split(":")[1].substring(1);
                 }
 
                 return Language.MSG.STATISTIC_FORMAT_NUMBER.parse(String.valueOf(pos), top[pos-1]);
@@ -107,8 +113,8 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
                 int pos = Integer.parseInt(s.split("_")[2]);
                 String name = split[1].toUpperCase();
 
-                if (split.length > 3) {
-                    return Language.MSG.STATISTIC_HEADLINE_TOP.parse(
+                if (split.length > 3 && !(s.endsWith("_name") || s.endsWith("_value"))) {
+                    return Language.MSG.STATISTIC_HEADLINE_FLOP.parse(
                             String.valueOf(pos),
                             Language.MSG.valueOf("HEAD_" + name).parse());
                 }
@@ -117,6 +123,12 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
 
                 if (top.length < pos) {
                     return ""; // we do not have enough entries, return empty
+                }
+
+                if (s.endsWith("_name")) {
+                    return top[pos-1].split(":")[0];
+                } else if (s.endsWith("_value")) {
+                    return top[pos-1].split(":")[1].substring(1);
                 }
 
                 return Language.MSG.STATISTIC_FORMAT_NUMBER.parse(String.valueOf(pos), top[pos-1]);
