@@ -71,7 +71,7 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
                             Language.MSG.valueOf("HEAD_" + name).parse());
                 }
 
-                String[] top = LeaderboardBuffer.top(pos, name);
+                String[] top = LeaderboardBuffer.top(pos, name, 0);
 
                 if (top.length < pos) {
                     return ""; // we do not have enough entries, return empty

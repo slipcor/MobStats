@@ -106,8 +106,6 @@ public class Language extends CoreLanguage {
         SIGN_SORTED_BY("sorted by"),
         SIGN_SORTED_COLUMN("&a%0%");
 
-        Z("-");
-
         private final String node;
         private String value;
 
