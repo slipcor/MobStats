@@ -668,11 +668,11 @@ public final class DatabaseAPI {
     /**
      * Get the top statistics sorted by type
      *
-     * @param count the amount to fetch
+     * @param limit the amount to fetch
      * @param sort  the type to sort by
      * @return a sorted array
      */
-    public static String[] top(final int count, String sort) {
+    public static String[] top(final int limit, String sort) {
         if (!plugin.getSQLHandler().isConnected()) {
             plugin.getLogger().severe("Database is not connected!");
             plugin.sendPrefixedOP(new ArrayList<>(), DATABASE_CONNECTED);
@@ -698,14 +698,14 @@ public final class DatabaseAPI {
                 case "CURRENTSTREAK":
                     order = "currentstreak";
                     break;
-                case "KILLS":
                 case "K-D":
+                    order = "`kills`/(`deaths`+1.0)";
+                    break;
+                case "KILLS":
                 default:
                     order = "kills";
                     break;
             }
-
-            int limit = sort.equals("K-D") ? Math.min(count, 50) : count;
 
             boolean isAscending = false;
 
@@ -754,7 +754,7 @@ public final class DatabaseAPI {
             return output;
         }
 
-        return sortParse(results, count);
+        return sortParse(results, limit);
     }
 
     /**
@@ -790,14 +790,16 @@ public final class DatabaseAPI {
                 case "CURRENTSTREAK":
                     order = "currentstreak";
                     break;
-                case "KILLS":
                 case "K-D":
+                    order = "`kills`/(`deaths`+1.0)";
+                    break;
+                case "KILLS":
                 default:
                     order = "kills";
                     break;
             }
 
-            int limit = sort.equals("K-D") ? Math.min(count, 50) : count;
+            int limit = count;
 
             boolean isAscending = true;
 

@@ -62,6 +62,8 @@ public class CommandTop extends CoreCommand {
                         Bukkit.getScheduler().runTaskAsynchronously(MobStats.getInstance(), new SendPlayerTop(sender, "DEATHS", amount));
                     } else if (args[1].equalsIgnoreCase("streak")) {
                         Bukkit.getScheduler().runTaskAsynchronously(MobStats.getInstance(), new SendPlayerTop(sender, "STREAK", amount));
+                    } else if (args[1].equalsIgnoreCase("ratio")) {
+                        Bukkit.getScheduler().runTaskAsynchronously(MobStats.getInstance(), new SendPlayerTop(sender, "K-D", amount));
                     } else {
                         return;
                     }
@@ -98,6 +100,7 @@ public class CommandTop extends CoreCommand {
             results.add("kills");
             results.add("deaths");
             results.add("streak");
+            results.add("ratio");
             return results;
         }
 
@@ -109,6 +112,7 @@ public class CommandTop extends CoreCommand {
         addIfMatches(results, "kills", args[1].toLowerCase());
         addIfMatches(results, "deaths", args[1].toLowerCase());
         addIfMatches(results, "streak", args[1].toLowerCase());
+        addIfMatches(results, "ratio", args[1].toLowerCase());
 
         return results;
     }

@@ -1,5 +1,7 @@
 # v0.1 Changelog
 
+- v0.1.15 - pull several fixes from upstream:
+  - **FIX** - properly pre-select top and flop kills when sorting by ratio 
 - v0.1.14 - support hex colors (Core Update)
 - v0.1.13 - pull several fixes from upstream:
   - **FIX** - prevent NPE due to null players
