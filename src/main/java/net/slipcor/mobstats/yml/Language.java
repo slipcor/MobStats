@@ -100,6 +100,7 @@ public class Language extends CoreLanguage {
         STATISTIC_HEADLINE_KILLS("Kills"),
         STATISTIC_HEADLINE_RATIO(""),
         STATISTIC_HEADLINE_STREAK("Streaks"),
+        STATISTIC_HEADLINE_CURRENTSTREAK("Active Streaks"),
 
         STATISTIC_SEPARATOR("&7---------------"),
 
@@ -110,6 +111,7 @@ public class Language extends CoreLanguage {
         STATISTIC_VALUE_NAME("Name"),
         STATISTIC_VALUE_RATIO("Ratio"),
         STATISTIC_VALUE_STREAK("Streak"),
+        STATISTIC_VALUE_CURRENTSTREAK("Active Streak"),
 
         SIGN_SORTED_BY("sorted by"),
         SIGN_SORTED_COLUMN("&a%0%");
