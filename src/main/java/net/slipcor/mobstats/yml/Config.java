@@ -104,6 +104,8 @@ public class Config extends CoreConfig {
                 "announce lines from streak_announcements.yml on specific streak values"),
         STATISTICS_STREAK_COMMANDS(Type.BOOLEAN, "statistics.streakCommands", false, 
                 "issue commands from streak_commands.yml on specific streak values"),
+        STATISTICS_STREAK_BROKEN_THRESHOLD(Type.INT, "statistics.streakBrokenThreshold", 0,
+                "the minimum streak required to announce it has been broken (0=announce all)"),
         STATISTICS_FORCE_RELOAD_INTERVAL(Type.INT, "statistics.forceReloadInterval", -1,
                 "force reload the database from outside changes after how many seconds"),
 

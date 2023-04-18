@@ -111,7 +111,9 @@ public final class DatabaseAPI {
 
             final int streak = EntityStatisticsBuffer.getStreak(victim.getUniqueId());
 
-            if (streak > 0) {
+            final int threshold = plugin.config().getInt(Config.Entry.STATISTICS_STREAK_BROKEN_THRESHOLD);
+
+            if ((threshold == 0 && streak > 0) || (threshold > 0 && streak >= threshold)) {
                 Bukkit.getScheduler().runTaskLaterAsynchronously(
                         MobStats.getInstance(), new Runnable() {
                             @Override
@@ -158,7 +160,9 @@ public final class DatabaseAPI {
 
         final int streak = EntityStatisticsBuffer.getStreak(victim.getUniqueId());
 
-        if (streak > 0) {
+        final int threshold = plugin.config().getInt(Config.Entry.STATISTICS_STREAK_BROKEN_THRESHOLD);
+
+        if ((threshold == 0 && streak > 0) || (threshold > 0 && streak >= threshold)) {
             Bukkit.getScheduler().runTaskLaterAsynchronously(
                     MobStats.getInstance(), new Runnable() {
                         @Override
