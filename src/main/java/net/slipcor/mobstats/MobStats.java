@@ -166,7 +166,8 @@ public class MobStats extends CorePlugin {
                 for (String message : msgList) {
                     if (!message.isEmpty()) {
                         String replacement = Language.colorize(message)
-                                .replace("%entity%", NameHandler.getName(entity));
+                                .replace("%entity%", NameHandler.getName(entity))
+                                .replace("%value%", String.valueOf(value));
                         if (message.contains("%killed%")) {
                             String lastKill = DatabaseAPI.getLastKilled(entity.getName());
                             if (lastKill != null) {
@@ -199,7 +200,8 @@ public class MobStats extends CorePlugin {
                     if (!command.isEmpty()) {
                         String replacement = Language.colorize(command)
                                 .replace("%entity%", NameHandler.getName(entity))
-                                .replace("%entityid%", entity.getUniqueId().toString());
+                                .replace("%entityid%", entity.getUniqueId().toString())
+                                .replace("%value%", String.valueOf(value));
                         if (command.contains("%killed%")) {
                             String lastKill = DatabaseAPI.getLastKilled(entity.getName());
                             if (lastKill != null) {
