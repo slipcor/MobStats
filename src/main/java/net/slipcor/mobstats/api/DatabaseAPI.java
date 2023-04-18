@@ -119,6 +119,10 @@ public final class DatabaseAPI {
                                 if (victim instanceof Player) {
                                     plugin.sendPrefixed((Player) victim,
                                             Language.MSG.PLAYER_KILLSTREAK_ENDED.parse(String.valueOf(streak)));
+                                    String playerName =  NameHandler.getName(victim);
+                                    for (Player p : Bukkit.getServer().getOnlinePlayers()) {
+                                        plugin.sendPrefixed(p, Language.MSG.PLAYER_KILLSTREAK_ENDED_GLOBAL.parse(playerName, String.valueOf(streak)));
+                                    }
                                 }
                             }
                         }, 1L
@@ -162,6 +166,10 @@ public final class DatabaseAPI {
                             if (victim instanceof Player) {
                                 plugin.sendPrefixed((Player) victim,
                                         Language.MSG.PLAYER_KILLSTREAK_ENDED.parse(String.valueOf(streak)));
+                                String playerName =  NameHandler.getName(victim);
+                                for (Player p : Bukkit.getServer().getOnlinePlayers()) {
+                                    plugin.sendPrefixed(p, Language.MSG.PLAYER_KILLSTREAK_ENDED_GLOBAL.parse(playerName, String.valueOf(streak)));
+                                }
                             }
                         }
                     }, 1L
