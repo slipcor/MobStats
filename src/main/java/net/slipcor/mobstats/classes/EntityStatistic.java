@@ -11,8 +11,8 @@ import java.util.UUID;
  */
 public class EntityStatistic {
     private final String name;
-    private final int kills;
-    private final int deaths;
+    private int kills;
+    private int deaths;
     private final int streak;
     private final int currentstreak;
     private final long time;
@@ -52,6 +52,10 @@ public class EntityStatistic {
         return time;
     }
 
+    public double getRatio() {
+        return ((double) kills) / (deaths + 1);
+    }
+
     public UUID getUid() { return uid; }
 
     public Map<InformationType, String> toStringMap() {
@@ -64,5 +68,13 @@ public class EntityStatistic {
         result.put(InformationType.STREAK, String.valueOf(streak));
 
         return result;
+    }
+
+    public void addKill() {
+        kills++;
+    }
+
+    public void addDeath() {
+        deaths++;
     }
 }

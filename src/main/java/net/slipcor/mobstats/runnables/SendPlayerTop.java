@@ -27,15 +27,15 @@ public class SendPlayerTop implements Runnable {
     @Override
     public void run() {
         String[] top = LeaderboardBuffer.top(amount, name);
-        sender.sendMessage(Language.MSG.HEAD_LINE.toString());
-        sender.sendMessage(Language.MSG.HEAD_HEADLINE.parse(
+        sender.sendMessage(Language.MSG.STATISTIC_SEPARATOR.toString());
+        sender.sendMessage(Language.MSG.STATISTIC_HEADLINE_TOP.parse(
                 displayAmount,
                 Language.MSG.valueOf("HEAD_" + (name.equals("K-D") ? "RATIO" : name)).toString()));
-        sender.sendMessage(Language.MSG.HEAD_LINE.toString());
+        sender.sendMessage(Language.MSG.STATISTIC_SEPARATOR.toString());
 
         int pos = 1;
         for (String stat : top) {
-            sender.sendMessage(Language.MSG.INFO_NUMBERS.parse(String.valueOf(pos++), stat));
+            sender.sendMessage(Language.MSG.STATISTIC_FORMAT_NUMBER.parse(String.valueOf(pos++), stat));
         }
     }
 }

@@ -18,7 +18,7 @@ import java.util.List;
 
 public class CommandDebugKill extends CoreCommand {
     public CommandDebugKill(CorePlugin plugin) {
-        super(plugin, "mobstats.debugkill", Language.MSG.ERROR_INVALID_ARGUMENT_COUNT);
+        super(plugin, "mobstats.debugkill", Language.MSG.COMMAND_ARGUMENT_COUNT_INVALID);
     }
 
     public static CoreDebugger debugger;
@@ -27,7 +27,7 @@ public class CommandDebugKill extends CoreCommand {
     public void commit(CommandSender sender, String[] args) {
         debugger.i("debug kill!");
         if (!hasPerms(sender)) {
-            MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_NOPERMDEBUG.toString());
+            MobStats.getInstance().sendPrefixed(sender, Language.MSG.NO_PERMISSION_DEBUG.toString());
             return;
         }
         if (!argCountValid(sender, args, new Integer[]{3})) {

@@ -15,13 +15,13 @@ import java.util.List;
 
 public class CommandReload extends CoreCommand {
     public CommandReload(CorePlugin plugin) {
-        super(plugin, "mobstats.reload", Language.MSG.ERROR_INVALID_ARGUMENT_COUNT);
+        super(plugin, "mobstats.reload", Language.MSG.COMMAND_ARGUMENT_COUNT_INVALID);
     }
 
     @Override
     public void commit(CommandSender sender, String[] args) {
         if (!hasPerms(sender)) {
-            MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_NOPERMRELOAD.toString());
+            MobStats.getInstance().sendPrefixed(sender, Language.MSG.NO_PERMISSION_RELOAD.toString());
             return;
         }
 
@@ -34,7 +34,7 @@ public class CommandReload extends CoreCommand {
             return;
         }
         MobStats.getInstance().reloadStreaks();
-        MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_RELOADED.parse());
+        MobStats.getInstance().sendPrefixed(sender, Language.MSG.COMMAND_RELOAD_SUCCESS.parse());
 
         DatabaseAPI.refresh();
 

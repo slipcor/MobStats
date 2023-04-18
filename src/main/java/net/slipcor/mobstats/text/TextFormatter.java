@@ -19,7 +19,7 @@ public class TextFormatter {
 
 
     public static TextComponent[] addPrefix(TextComponent[] message) {
-        TextComponent[] prefix = TextFormatter.toTextComponent(Language.MSG.MSG_PREFIX.toString());
+        TextComponent[] prefix = TextFormatter.toTextComponent(Language.MSG.MESSAGE_PREFIX.toString());
         TextComponent[] result = Arrays.copyOf(prefix, message.length + prefix.length);
         System.arraycopy(message, 0, result, prefix.length, message.length);
         return result;

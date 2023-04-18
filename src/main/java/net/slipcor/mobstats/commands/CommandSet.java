@@ -18,13 +18,13 @@ import java.util.List;
 
 public class CommandSet extends CoreCommand {
     public CommandSet(CorePlugin plugin) {
-        super(plugin, "mobstats.set", Language.MSG.ERROR_INVALID_ARGUMENT_COUNT);
+        super(plugin, "mobstats.set", Language.MSG.COMMAND_ARGUMENT_COUNT_INVALID);
     }
 
     @Override
     public void commit(final CommandSender sender, final String[] args) {
         if (!hasPerms(sender)) {
-            MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_NOPERMSET.toString());
+            MobStats.getInstance().sendPrefixed(sender, Language.MSG.NO_PERMISSION_SET.toString());
             return;
         }
 
@@ -58,14 +58,14 @@ public class CommandSet extends CoreCommand {
                     return;
                 }
 
-                MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_SET.parse(args[2], args[1], String.valueOf(amount)));
+                MobStats.getInstance().sendPrefixed(sender, Language.MSG.COMMAND_SET_SUCCESS.parse(args[2], args[1], String.valueOf(amount)));
 
                 DatabaseAPI.refresh();
             } else {
-                MobStats.getInstance().sendPrefixed(sender, Language.MSG.INFO_PLAYERNOTFOUND.parse(args[1]));
+                MobStats.getInstance().sendPrefixed(sender, Language.MSG.COMMAND_PLAYER_NOT_FOUND.parse(args[1]));
             }
         } catch (Exception e) {
-            MobStats.getInstance().sendPrefixed(sender, Language.MSG.ERROR_INVALID_NUMBER.parse(args[3]));
+            MobStats.getInstance().sendPrefixed(sender, Language.MSG.COMMAND_ARGUMENT_INVALID_NUMBER.parse(args[3]));
         }
     }
 

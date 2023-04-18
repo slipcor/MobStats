@@ -66,7 +66,7 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
                 String name = split[1].toUpperCase();
 
                 if (split.length > 3) {
-                    return Language.MSG.HEAD_HEADLINE.parse(
+                    return Language.MSG.STATISTIC_HEADLINE_TOP.parse(
                             String.valueOf(pos),
                             Language.MSG.valueOf("HEAD_" + name).parse());
                 }
@@ -77,7 +77,7 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
                     return ""; // we do not have enough entries, return empty
                 }
 
-                return Language.MSG.INFO_NUMBERS.parse(String.valueOf(pos), top[pos-1]);
+                return Language.MSG.STATISTIC_FORMAT_NUMBER.parse(String.valueOf(pos), top[pos-1]);
             } catch (Exception e) {
                 // let's ignore this for now
                 long now = System.currentTimeMillis();
@@ -95,7 +95,7 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
                 String name = split[1].toUpperCase();
 
                 if (split.length > 3) {
-                    return Language.MSG.HEAD_HEADLINE.parse(
+                    return Language.MSG.STATISTIC_HEADLINE_TOP.parse(
                             String.valueOf(pos),
                             Language.MSG.valueOf("HEAD_" + name).parse());
                 }
@@ -106,7 +106,7 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
                     return ""; // we do not have enough entries, return empty
                 }
 
-                return Language.MSG.INFO_NUMBERS.parse(String.valueOf(pos), top[pos-1]);
+                return Language.MSG.STATISTIC_FORMAT_NUMBER.parse(String.valueOf(pos), top[pos-1]);
             } catch (Exception e) {
                 // let's ignore this for now
                 long now = System.currentTimeMillis();

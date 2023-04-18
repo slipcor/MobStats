@@ -17,29 +17,29 @@ import java.util.List;
 
 public class CommandWipe extends CoreCommand {
     public CommandWipe(CorePlugin plugin) {
-        super(plugin, "mobstats.wipe", Language.MSG.ERROR_INVALID_ARGUMENT_COUNT);
+        super(plugin, "mobstats.wipe", Language.MSG.COMMAND_ARGUMENT_COUNT_INVALID);
     }
 
     @Override
     public void commit(CommandSender sender, String[] args) {
         if (!hasPerms(sender)) {
-            MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_NOPERMWIPE.toString());
+            MobStats.getInstance().sendPrefixed(sender, Language.MSG.NO_PERMISSION_WIPE.toString());
             return;
         }
 
         if (args.length < 2) {
             DatabaseAPI.wipe(null);
-            MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_WIPED.toString());
+            MobStats.getInstance().sendPrefixed(sender, Language.MSG.COMMAND_WIPE_GLOBAL_SUCCESS.toString());
         } else {
             OfflinePlayer player =  NameHandler.findPlayer(args[1]);
 
             if (player == null) {
-                MobStats.getInstance().sendPrefixed(sender, Language.MSG.INFO_PLAYERNOTFOUND.parse(args[1]));
+                MobStats.getInstance().sendPrefixed(sender, Language.MSG.COMMAND_PLAYER_NOT_FOUND.parse(args[1]));
                 return;
             }
 
             DatabaseAPI.wipe(player.getUniqueId());
-            MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_WIPEDFOR.parse(args[1]));
+            MobStats.getInstance().sendPrefixed(sender, Language.MSG.COMMAND_WIPE_PLAYER_SUCCESS.parse(args[1]));
         }
 
         DatabaseAPI.refresh();

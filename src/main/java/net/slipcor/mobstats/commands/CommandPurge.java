@@ -13,13 +13,13 @@ import java.util.List;
 
 public class CommandPurge extends CoreCommand {
     public CommandPurge(CorePlugin plugin) {
-        super(plugin, "mobstats.purge", Language.MSG.ERROR_INVALID_ARGUMENT_COUNT);
+        super(plugin, "mobstats.purge", Language.MSG.COMMAND_ARGUMENT_COUNT_INVALID);
     }
 
     @Override
     public void commit(CommandSender sender, String[] args) {
         if (!hasPerms(sender)) {
-            MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_NOPERMPURGE.toString());
+            MobStats.getInstance().sendPrefixed(sender, Language.MSG.NO_PERMISSION_PURGE.toString());
             return;
         }
 
@@ -40,16 +40,16 @@ public class CommandPurge extends CoreCommand {
         if (args.length > 1) {
             if (args[1].equalsIgnoreCase("specific")) {
                 final int count = DatabaseAPI.purgeKillStats(days);
-                MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_PURGED.parse(String.valueOf(count)));
+                MobStats.getInstance().sendPrefixed(sender, Language.MSG.COMMAND_PURGE_SUCCESS.parse(String.valueOf(count)));
             } else if (args[1].equalsIgnoreCase("standard")) {
                 final int count = DatabaseAPI.purgeStats(days);
-                MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_PURGED.parse(String.valueOf(count)));
+                MobStats.getInstance().sendPrefixed(sender, Language.MSG.COMMAND_PURGE_SUCCESS.parse(String.valueOf(count)));
             } else if (args[1].equalsIgnoreCase("all")) {
                 final int count = DatabaseAPI.purgeKillStats(days) + DatabaseAPI.purgeStats(days);
-                MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_PURGED.parse(String.valueOf(count)));
+                MobStats.getInstance().sendPrefixed(sender, Language.MSG.COMMAND_PURGE_SUCCESS.parse(String.valueOf(count)));
             } else if (args[1].equalsIgnoreCase("mobs")) {
                 final int count = DatabaseAPI.purgeMobStats(days);
-                MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_PURGED.parse(String.valueOf(count)));
+                MobStats.getInstance().sendPrefixed(sender, Language.MSG.COMMAND_PURGE_SUCCESS.parse(String.valueOf(count)));
             } else {
                 MobStats.getInstance().sendPrefixed(sender, "/mobstats purge [specific | standard | mobs | all] [days]");
             }

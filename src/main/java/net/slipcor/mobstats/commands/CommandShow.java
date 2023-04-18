@@ -18,7 +18,7 @@ import java.util.List;
 
 public class CommandShow extends CoreCommand {
     public CommandShow(CorePlugin plugin) {
-        super(plugin, "mobstats.count", Language.MSG.ERROR_INVALID_ARGUMENT_COUNT);
+        super(plugin, "mobstats.count", Language.MSG.COMMAND_ARGUMENT_COUNT_INVALID);
     }
 
     @Override
@@ -33,7 +33,7 @@ public class CommandShow extends CoreCommand {
                 Bukkit.getScheduler().runTaskAsynchronously(MobStats.getInstance(),
                         new SendPlayerStats(sender, (Player) sender));
             } else {
-                MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_NOSTATS.toString());
+                MobStats.getInstance().sendPrefixed(sender, Language.MSG.PLAYER_NO_STATS.toString());
             }
             return;
         }
@@ -44,13 +44,13 @@ public class CommandShow extends CoreCommand {
             final OfflinePlayer player = NameHandler.findPlayer(args[1]);
 
             if (player == null || player.getPlayer() == null) {
-                MobStats.getInstance().sendPrefixed(sender, Language.MSG.INFO_PLAYERNOTFOUND.parse(args[1]));
+                MobStats.getInstance().sendPrefixed(sender, Language.MSG.COMMAND_PLAYER_NOT_FOUND.parse(args[1]));
                 return;
             }
             Bukkit.getScheduler().runTaskAsynchronously(
                     MobStats.getInstance(), new SendPlayerStats(sender, player.getPlayer()));
         } else {
-            MobStats.getInstance().sendPrefixed(sender, Language.MSG.MSG_NOPERMSHOW.toString());
+            MobStats.getInstance().sendPrefixed(sender, Language.MSG.NO_PERMISSION_SHOW.toString());
         }
     }
 

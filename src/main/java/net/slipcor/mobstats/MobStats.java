@@ -99,7 +99,7 @@ public class MobStats extends CorePlugin {
 
     @Override
     protected String getMessagePrefix() {
-        return Language.MSG.MSG_PREFIX.parse();
+        return Language.MSG.MESSAGE_PREFIX.parse();
     }
 
     @Override
@@ -243,6 +243,7 @@ public class MobStats extends CorePlugin {
         new CommandShow(this).load(commandList, commandMap);
         new CommandSet(this).load(commandList, commandMap);
         new CommandTop(this).load(commandList, commandMap);
+        new CommandTopPlus(this).load(commandList, commandMap);
         new CommandReload(this).load(commandList, commandMap);
         new CommandWipe(this).load(commandList, commandMap);
 
@@ -433,7 +434,7 @@ public class MobStats extends CorePlugin {
         final OfflinePlayer player = NameHandler.findPlayer(args[0]);
 
         if (player == null) {
-            sendPrefixed(sender, Language.MSG.INFO_PLAYERNOTFOUND.parse(args[0]));
+            sendPrefixed(sender, Language.MSG.COMMAND_PLAYER_NOT_FOUND.parse(args[0]));
         }
 
         if (!found && DatabaseAPI.hasEntry(player.getUniqueId())) {
