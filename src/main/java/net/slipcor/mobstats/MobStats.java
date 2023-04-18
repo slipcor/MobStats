@@ -244,6 +244,7 @@ public class MobStats extends CorePlugin {
         new CommandSet(this).load(commandList, commandMap);
         new CommandTop(this).load(commandList, commandMap);
         new CommandTopPlus(this).load(commandList, commandMap);
+        new CommandTopWorld(this).load(commandList, commandMap);
         new CommandReload(this).load(commandList, commandMap);
         new CommandWipe(this).load(commandList, commandMap);
 

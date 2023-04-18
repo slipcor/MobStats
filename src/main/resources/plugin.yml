@@ -46,6 +46,12 @@ permissions:
   mobstats.top:
     description: Permission to get global stats
     default: true
+  mobstats.topplus:
+    description: Permission to get more detailed global stats
+    default: true
+  mobstats.topworld:
+    description: Permission to get more detailed global stats per world
+    default: true
   mobstats.null:
     description: Permission that you should not give to anyone.
     default: false
