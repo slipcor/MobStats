@@ -1,7 +1,16 @@
 # v0.1 Changelog
 
 - v0.1.15 - pull several fixes from upstream:
-  - **FIX** - properly pre-select top and flop kills when sorting by ratio 
+  - **FIX** - properly pre-select top and flop kills when sorting by ratio
+  - **FEAT** - add URL verification to prevent tampering with it [core update]
+  - **FEAT** - move to HTTPS for Updater [core update]
+  - **FEAT** - implement "topplus" which allows for "top players in the last X days"
+  - **FEAT** - introduce /mobstats topworld [type] [world] [days] {amount} - only works with specific stats - only for databases :P
+  - **FEAT** - add player message & broadcast about broken killstreak (above streakBrokenThreshold)
+  - **FEAT** - add %value% placeholder for streak announcements and commands
+  - **FEAT** - add top/flop placeholder specifications for raw values, append _value or _name (or _v and _v respectively for shorthands)
+  - **FEAT** - add "currentstreak" logic for placeholders and thus top/flop stats
+  - **DOC** - Update Placeholder information
 - v0.1.14 - support hex colors (Core Update)
 - v0.1.13 - pull several fixes from upstream:
   - **FIX** - prevent NPE due to null players
